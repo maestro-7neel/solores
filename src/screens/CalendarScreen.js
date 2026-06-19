@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   dayNum: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   dayNumToday: { backgroundColor: COLORS.accent },
   dayText: { color: COLORS.text, fontSize: 12, fontWeight: '600' },
-  dayTextToday: { color: '#000', fontWeight: '800' },
+  dayTextToday: { color: '#FFFFFF', fontWeight: '800' },
   dayAmt: { fontSize: 8, fontWeight: '700', marginTop: 1 },
   statusBar: { width: 20, height: 2, borderRadius: 1, marginTop: 2 },
   dayDetail: {

@@ -1,11 +1,11 @@
-# 🤖 AI Financial Copilot
+# 🤖 Solores
 
 A production-ready Gen-AI powered personal finance management app built with React Native (Expo).
 
 ## 🏗️ Folder Structure
 
 ```
-AIFinancialCopilot/
+solores/
 ├── App.js                          # Root navigation + auth gate
 ├── app.json                        # Expo config
 ├── babel.config.js
@@ -40,7 +40,7 @@ AIFinancialCopilot/
 
 ```bash
 # 1. Clone / extract the project
-cd AIFinancialCopilot
+cd solores
 
 # 2. Install dependencies
 npm install
@@ -93,7 +93,7 @@ Without an API key, the app uses intelligent mock responses that demonstrate all
 - Tap any day to see detailed spending
 - Per-day budget vs. spent comparison
 
-### AI Copilot (Mode 2)
+### solores (Mode 2)
 - Remaining budget + safe daily limit display
 - Ask "Can I spend ₹X?" with any context
 - Quick question shortcuts

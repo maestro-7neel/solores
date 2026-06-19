@@ -15,7 +15,7 @@ import {
 } from '../utils/financialUtils';
 
 export default function DashboardScreen({ navigation }) {
-  const { profile, monthExpenses, totalSpent, appMode, setMode } = useApp();
+  const { profile, monthExpenses, totalSpent, appMode, setMode, logout } = useApp();
 
   const remainingDays = getRemainingDaysInMonth();
   const availableBudget = useMemo(() => calcAvailableBudget(profile || {}, totalSpent), [profile, totalSpent]);
@@ -32,20 +32,28 @@ export default function DashboardScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <LinearGradient colors={['#F5F5F5', '#EEEEEE']} style={styles.header}>
+        <LinearGradient colors={['#05101C', '#071524']} style={styles.header}>
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.greeting}>Good {getTimeOfDay()},</Text>
               <Text style={styles.userName}>{getProfileLabel(profile?.userType)} 👋</Text>
             </View>
-            <View style={styles.modeToggle}>
-              <Text style={styles.modeLabel}>{appMode === 'ai' ? '🤖 AI' : '📊 Simple'}</Text>
-              <Switch
-                value={appMode === 'ai'}
-                onValueChange={v => setMode(v ? 'ai' : 'simple')}
-                trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
-                thumbColor={appMode === 'ai' ? COLORS.accent : COLORS.textMuted}
-              />
+            <View style={styles.headerRightGroup}>
+              <View style={styles.modeToggle}>
+                <Text style={styles.modeLabel}>{appMode === 'ai' ? '🤖 AI' : '📊 Simple'}</Text>
+                <Switch
+                  value={appMode === 'ai'}
+                  onValueChange={v => setMode(v ? 'ai' : 'simple')}
+                  trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
+                  thumbColor={appMode === 'ai' ? COLORS.accent : COLORS.textMuted}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.logoutBtn}
+                onPress={logout}
+              >
+                <Ionicons name="log-out" size={20} color={COLORS.danger} />
+              </TouchableOpacity>
             </View>
           </View>
           <Text style={styles.monthLabel}>{getCurrentMonthLabel()}</Text>
@@ -108,7 +116,7 @@ export default function DashboardScreen({ navigation }) {
           {appMode === 'ai' && (
             <TouchableOpacity
               style={[styles.aiBanner, SHADOWS.glow]}
-              onPress={() => navigation.navigate('AI Copilot')}
+              onPress={() => navigation.navigate('solores')}
             >
               <LinearGradient
                 colors={[COLORS.accentSoft, '#00D4AA11']}
@@ -117,7 +125,7 @@ export default function DashboardScreen({ navigation }) {
               >
                 <Text style={styles.aiBannerIcon}>🤖</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.aiBannerTitle}>AI Copilot Active</Text>
+                  <Text style={styles.aiBannerTitle}>solores Active</Text>
                   <Text style={styles.aiBannerSub}>Ask "Can I spend ₹500?" →</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={COLORS.accent} />
@@ -231,25 +239,27 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.lg },
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  headerRightGroup: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
   greeting: { color: COLORS.textSecondary, fontSize: 13 },
   userName: { color: COLORS.text, fontSize: 20, fontWeight: '800' },
   modeToggle: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   modeLabel: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '600' },
+  logoutBtn: { padding: 6 },
   monthLabel: { color: COLORS.textMuted, fontSize: 12 },
   content: { padding: SPACING.md },
   heroCard: { borderRadius: RADIUS.xl, marginBottom: SPACING.md, overflow: 'hidden' },
-  heroGradient: { padding: SPACING.lg, borderRadius: RADIUS.xl, borderWidth: 1, borderColor: COLORS.border },
+  heroGradient: { padding: SPACING.lg, borderRadius: RADIUS.xl, borderWidth: 1, borderColor: '#14213A', backgroundColor: '#0A111C' },
   heroLabel: { color: COLORS.textSecondary, fontSize: 13, fontWeight: '600', marginBottom: 6 },
   heroAmount: { fontSize: 38, fontWeight: '800', letterSpacing: -1, marginBottom: 16 },
-  barTrack: { height: 6, backgroundColor: COLORS.border, borderRadius: 3, marginBottom: 16, overflow: 'hidden' },
+  barTrack: { height: 6, backgroundColor: '#14213A', borderRadius: 3, marginBottom: 16, overflow: 'hidden' },
   barFill: { height: 6, borderRadius: 3 },
   heroRow: { flexDirection: 'row', justifyContent: 'space-between' },
   miniValue: { fontSize: 15, fontWeight: '700' },
-  miniLabel: { color: COLORS.textMuted, fontSize: 11, marginTop: 2 },
+  miniLabel: { color: COLORS.textSecondary, fontSize: 11, marginTop: 2 },
   statsRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.md },
   statCard: {
-    flex: 1, backgroundColor: COLORS.surface, borderRadius: RADIUS.md,
-    padding: SPACING.md, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border,
+    flex: 1, backgroundColor: '#0A111C', borderRadius: RADIUS.md,
+    padding: SPACING.md, alignItems: 'center', borderWidth: 1, borderColor: '#14213A',
   },
   statValue: { fontSize: 20, fontWeight: '800' },
   statLabel: { color: COLORS.textMuted, fontSize: 11, marginTop: 2 },

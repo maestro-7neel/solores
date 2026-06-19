@@ -7,6 +7,7 @@ const KEYS = {
   USER_PROFILE: '@copilot_user_profile',
   EXPENSES: '@copilot_expenses',
   APP_MODE: '@copilot_app_mode',
+  LOGIN_CREDENTIALS: '@copilot_login_creds',
 };
 
 export const StorageService = {
@@ -59,6 +60,27 @@ export const StorageService = {
 
   async setAppMode(mode) {
     await AsyncStorage.setItem(KEYS.APP_MODE, mode);
+  },
+
+  // --- Login Credentials ---
+  async saveLoginCredentials(loginId, password) {
+    const credentials = { loginId, password, createdAt: new Date().toISOString() };
+    await AsyncStorage.setItem(KEYS.LOGIN_CREDENTIALS, JSON.stringify(credentials));
+  },
+
+  async getLoginCredentials() {
+    const raw = await AsyncStorage.getItem(KEYS.LOGIN_CREDENTIALS);
+    return raw ? JSON.parse(raw) : null;
+  },
+
+  async validateLogin(loginId, password) {
+    const credentials = await StorageService.getLoginCredentials();
+    if (!credentials) return false;
+    return credentials.loginId === loginId && credentials.password === password;
+  },
+
+  async clearLoginCredentials() {
+    await AsyncStorage.removeItem(KEYS.LOGIN_CREDENTIALS);
   },
 };
 

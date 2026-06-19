@@ -1,4 +1,4 @@
-// App.js - Root entry point for AI Financial Copilot
+// App.js - Root entry point for Solores
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,10 +8,11 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Context
-import { AppProvider } from './src/context/AppContext';
+import { AppProvider, useApp } from './src/context/AppContext';
 
 // Screens
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import LoginScreen from './src/screens/LoginScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import ExpenseTrackerScreen from './src/screens/ExpenseTrackerScreen';
 import CalendarScreen from './src/screens/CalendarScreen';
@@ -20,7 +21,6 @@ import HealthScoreScreen from './src/screens/HealthScoreScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
 
 // Utils
-import { StorageService } from './src/services/StorageService';
 import { COLORS } from './src/utils/theme';
 
 const Stack = createNativeStackNavigator();
@@ -33,8 +33,8 @@ function MainTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopColor: COLORS.border,
+          backgroundColor: COLORS.background,
+          borderTopColor: '#09101A',
           borderTopWidth: 1,
           paddingBottom: 8,
           paddingTop: 8,
@@ -48,7 +48,7 @@ function MainTabs() {
             Dashboard: focused ? 'home' : 'home-outline',
             Tracker: focused ? 'wallet' : 'wallet-outline',
             Calendar: focused ? 'calendar' : 'calendar-outline',
-            'AI Copilot': focused ? 'sparkles' : 'sparkles-outline',
+            solores: focused ? 'sparkles' : 'sparkles-outline',
             Health: focused ? 'heart' : 'heart-outline',
           };
           return <Ionicons name={icons[route.name]} size={22} color={color} />;
@@ -58,30 +58,15 @@ function MainTabs() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Tracker" component={ExpenseTrackerScreen} />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
-      <Tab.Screen name="AI Copilot" component={AICopilotScreen} />
+      <Tab.Screen name="solores" component={AICopilotScreen} />
       <Tab.Screen name="Health" component={HealthScoreScreen} />
     </Tab.Navigator>
   );
 }
 
-export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasProfile, setHasProfile] = useState(false);
-
-  useEffect(() => {
-    checkUserProfile();
-  }, []);
-
-  const checkUserProfile = async () => {
-    try {
-      const profile = await StorageService.getUserProfile();
-      setHasProfile(!!profile);
-    } catch (e) {
-      setHasProfile(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+// Root navigator that responds to profile changes
+function RootNavigator() {
+  const { profile, isLoading, isLoggedIn, reload } = useApp();
 
   if (isLoading) {
     return (
@@ -92,21 +77,38 @@ export default function App() {
   }
 
   return (
-    <AppProvider>
-      <NavigationContainer>
-        <StatusBar style="light" />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {!hasProfile ? (
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          ) : null}
-          <Stack.Screen name="MainTabs" component={MainTabs} />
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isLoggedIn ? (
           <Stack.Screen
-            name="AddExpense"
-            component={AddExpenseScreen}
-            options={{ presentation: 'modal' }}
+            name="Login"
+            component={(props) => (
+              <LoginScreen
+                {...props}
+                onLoginSuccess={reload}
+              />
+            )}
           />
-        </Stack.Navigator>
-      </NavigationContainer>
+        ) : null}
+        {!profile ? (
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        ) : null}
+        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen
+          name="AddExpense"
+          component={AddExpenseScreen}
+          options={{ presentation: 'modal' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <AppProvider>
+      <RootNavigator />
     </AppProvider>
   );
 }

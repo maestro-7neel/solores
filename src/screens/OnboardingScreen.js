@@ -35,14 +35,14 @@ export default function OnboardingScreen({ navigation }) {
   };
 
   return (
-    <LinearGradient colors={['#0A0E1A', '#0F1929', '#0A0E1A']} style={styles.container}>
+    <LinearGradient colors={['#05060A', '#071524', '#05060A']} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoRow}>
               <Text style={styles.logoIcon}>🤖</Text>
-              <Text style={styles.logoText}>AI Financial Copilot</Text>
+              <Text style={styles.logoText}>Solores</Text>
             </View>
             <Text style={styles.tagline}>Smart budgeting for the next generation</Text>
           </View>
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
     padding: 16, alignItems: 'center', marginTop: SPACING.lg,
   },
-  btnText: { color: '#000', fontWeight: '800', fontSize: 16 },
+  btnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
   backBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: SPACING.md },
   backText: { color: COLORS.textSecondary, fontSize: 14 },
   inputGroup: { marginBottom: SPACING.md },

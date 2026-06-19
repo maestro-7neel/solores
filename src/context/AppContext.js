@@ -10,6 +10,7 @@ const initialState = {
   expenses: [],
   appMode: 'simple', // 'simple' | 'ai'
   isLoading: true,
+  isLoggedIn: false,
 };
 
 function reducer(state, action) {
@@ -26,6 +27,10 @@ function reducer(state, action) {
       return { ...state, appMode: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
+    case 'SET_LOGIN':
+      return { ...state, isLoggedIn: action.payload };
+    case 'LOGOUT':
+      return { ...initialState, isLoading: false };
     default:
       return state;
   }
@@ -42,14 +47,16 @@ export function AppProvider({ children }) {
   const loadData = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      const [profile, expenses, mode] = await Promise.all([
+      const [profile, expenses, mode, credentials] = await Promise.all([
         StorageService.getUserProfile(),
         StorageService.getExpenses(),
         StorageService.getAppMode(),
+        StorageService.getLoginCredentials(),
       ]);
       if (profile) dispatch({ type: 'SET_PROFILE', payload: profile });
       dispatch({ type: 'SET_EXPENSES', payload: expenses || [] });
       dispatch({ type: 'SET_MODE', payload: mode });
+      if (credentials) dispatch({ type: 'SET_LOGIN', payload: true });
     } catch (e) {
       console.error('Failed to load data:', e);
     } finally {
@@ -77,6 +84,25 @@ export function AppProvider({ children }) {
     dispatch({ type: 'SET_MODE', payload: mode });
   }, []);
 
+  const logout = useCallback(async () => {
+    try {
+      await StorageService.clearUserProfile();
+      await StorageService.clearLoginCredentials();
+      dispatch({ type: 'LOGOUT' });
+    } catch (e) {
+      console.error('Failed to logout:', e);
+    }
+  }, []);
+
+  const setLoginState = useCallback(async (loginId, password) => {
+    try {
+      await StorageService.saveLoginCredentials(loginId, password);
+      dispatch({ type: 'SET_LOGIN', payload: true });
+    } catch (e) {
+      console.error('Failed to set login state:', e);
+    }
+  }, []);
+
   // Derived: current month expenses only
   const monthExpenses = getCurrentMonthExpenses(state.expenses);
   const totalSpent = monthExpenses.reduce((s, e) => s + e.amount, 0);
@@ -92,6 +118,8 @@ export function AppProvider({ children }) {
         deleteExpense,
         setMode,
         reload: loadData,
+        logout,
+        setLoginState,
       }}
     >
       {children}

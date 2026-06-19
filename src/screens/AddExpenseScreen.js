@@ -167,5 +167,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
     padding: 16, alignItems: 'center', marginBottom: 40,
   },
-  submitText: { color: '#000', fontWeight: '800', fontSize: 16 },
+  submitText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
 });

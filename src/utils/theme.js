@@ -1,32 +1,38 @@
-// src/utils/theme.js - Design system for AI Financial Copilot
-// Light mode: White & Blue aesthetic for clean, modern design
+// src/utils/theme.js - Design system for Solores
+// Modern minimal aesthetic: Dark teal background with white card-based UI and purple accents
 
 export const COLORS = {
-  // Base
-  background: '#FFFFFF',
-  surface: '#F8FAFB',
-  surfaceElevated: '#F0F4F8',
+  // Base - Dark teal background with white cards
+  background: '#0D2D3D',
+  surface: '#FFFFFF',
+  surfaceElevated: '#F5F5F5',
   card: '#FFFFFF',
 
-  // Accent palette
-  accent: '#3B82F6',        // Blue - primary CTA
-  accentSoft: '#3B82F622',
-  accentBlue: '#0EA5E9',    // Sky blue
-  accentPurple: '#6366F1',
-  accentAmber: '#F97316',
+  // Accent palette - Purple/Lavender theme
+  accent: '#A78BFA',        // Lavender purple
+  accentSoft: '#A78BFA22',
+  accentBlue: '#818CF8',    // Indigo
+  accentPurple: '#C4B5FD',  // Light purple
+  accentAmber: '#FBBF24',
 
   // Status colors
   success: '#10B981',
-  successSoft: '#D1FAE510',
+  successSoft: '#10B98122',
   warning: '#F59E0B',
-  warningSoft: '#FEF3C710',
+  warningSoft: '#F59E0B22',
   danger: '#EF4444',
-  dangerSoft: '#FEE2E210',
+  dangerSoft: '#EF444422',
 
-  // Typography
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  textMuted: '#9CA3AF',
+  // Typography - Dark text on light cards, light text on dark background
+  text: '#1F2937',           // Dark gray for card text
+  textSecondary: '#4B5563',  // Medium gray for secondary text
+  textMuted: '#6B7280',      // Light gray for muted text
+  surfaceText: '#1F2937',    // Dark text on cards
+  
+  // Light text for dark backgrounds
+  textLight: '#FFFFFF',
+  textSecondaryLight: '#E5E7EB',
+  textMutedLight: '#D1D5DB',
 
   // Borders
   border: '#E5E7EB',
@@ -36,11 +42,11 @@ export const COLORS = {
   calGreen: '#10B981',
   calYellow: '#F59E0B',
   calRed: '#EF4444',
-  calEmpty: '#F3F4F6',
+  calEmpty: '#F0F0F0',
 
   // Gradient stops
-  gradientStart: '#FFFFFF',
-  gradientEnd: '#F0F4F8',
+  gradientStart: '#0D2D3D',
+  gradientEnd: '#0D2D3D',
 };
 
 export const FONTS = {
@@ -71,17 +77,17 @@ export const RADIUS = {
 export const SHADOWS = {
   card: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 5,
   },
   glow: {
-    shadowColor: '#00D4AA',
+    shadowColor: '#A78BFA',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 5,
   },
 };
 

@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
     paddingHorizontal: 14, paddingVertical: 8,
   },
-  addBtnText: { color: '#000', fontWeight: '700', fontSize: 14 },
+  addBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
   totalCard: {
     margin: SPACING.md, backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg, padding: SPACING.lg,

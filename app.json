@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AI Financial Copilot",
-    "slug": "ai-financial-copilot",
+    "name": "Solores",
+    "slug": "solores",
     "version": "54.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,13 +12,13 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.aifinancialcopilot"
+      "bundleIdentifier": "com.yourname.solores"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#0A0E1A"
       },
-      "package": "com.yourname.aifinancialcopilot"
+      "package": "com.yourname.solores"
     },
     "web": {
       "bundler": "metro"
