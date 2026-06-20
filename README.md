@@ -1,6 +1,7 @@
 # 🤖 Solores
 
 A production-ready Gen-AI powered personal finance management app built with React Native (Expo).
+link of the deployed site: dmkhb48726al6.cloudfront.net
 
 ## 🏗️ Folder Structure
 
