@@ -45,7 +45,16 @@ export default function ExpenseTrackerScreen({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Expense Tracker</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Expense Tracker</Text>
+          <TouchableOpacity
+            style={styles.headerAddBtn}
+            onPress={() => navigation.navigate('AddExpense')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add-circle" size={24} color={COLORS.text} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -81,15 +90,18 @@ export default function ExpenseTrackerScreen({ navigation }) {
               />
             </View>
           ) : (
-            <View style={styles.emptyChart}>
-              <Text style={styles.emptyIcon}>📊</Text>
-              <Text style={styles.emptyText}>Add expenses to see breakdown</Text>
-              <TouchableOpacity
-                style={styles.emptyAddBtn}
-                onPress={() => navigation.navigate('AddExpense')}
-              >
-                <Text style={styles.emptyAddBtnText}>+ Add Expense</Text>
-              </TouchableOpacity>
+            <View style={styles.chartCard}>
+              <Text style={styles.sectionTitle}>Spending Breakdown</Text>
+              <View style={styles.emptyChart}>
+                <Text style={styles.emptyIcon}>📊</Text>
+                <Text style={styles.emptyText}>Add expenses to see breakdown</Text>
+                <TouchableOpacity
+                  style={styles.emptyAddBtn}
+                  onPress={() => navigation.navigate('AddExpense')}
+                >
+                  <Text style={styles.emptyAddBtnText}>+ Add Expense</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
@@ -264,4 +276,14 @@ const styles = StyleSheet.create({
   txAmount: { color: COLORS.danger, fontWeight: '700', fontSize: 14 },
   deleteBtn: { padding: 4 },
   emptyTx: { alignItems: 'center', padding: SPACING.xl },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerAddBtn: {
+    paddingHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

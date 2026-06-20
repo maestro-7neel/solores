@@ -15,7 +15,7 @@ import {
 } from '../utils/financialUtils';
 
 export default function DashboardScreen({ navigation }) {
-  const { profile, monthExpenses, totalSpent, appMode, setMode, logout } = useApp();
+  const { profile, monthExpenses, totalSpent, appMode, setMode, logout, username } = useApp();
 
   const remainingDays = getRemainingDaysInMonth();
   const availableBudget = useMemo(() => calcAvailableBudget(profile || {}, totalSpent), [profile, totalSpent]);
@@ -46,7 +46,9 @@ export default function DashboardScreen({ navigation }) {
             </View>
             <View style={styles.headerCenter}>
               <Text style={styles.greeting}>Good {getTimeOfDay()},</Text>
-              <Text style={styles.userName}>{getProfileLabel(profile?.userType)} 👋</Text>
+              <Text style={styles.userName}>
+                {username ? username.charAt(0).toUpperCase() + username.slice(1) : 'Friend'} 👋
+              </Text>
             </View>
             <TouchableOpacity
               style={styles.logoutBtnRight}

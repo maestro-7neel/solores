@@ -1,6 +1,7 @@
 // src/context/AppContext.js - Global state with Context + useReducer
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { StorageService } from '../services/StorageService';
+import { AuthService } from '../services/AuthService';
 import { getCurrentMonthExpenses } from '../utils/financialUtils';
 
 const AppContext = createContext(null);
@@ -11,6 +12,7 @@ const initialState = {
   appMode: 'simple', // 'simple' | 'ai'
   isLoading: true,
   isLoggedIn: false,
+  username: '',
 };
 
 function reducer(state, action) {
@@ -29,6 +31,8 @@ function reducer(state, action) {
       return { ...state, isLoading: action.payload };
     case 'SET_LOGIN':
       return { ...state, isLoggedIn: action.payload };
+    case 'SET_USERNAME':
+      return { ...state, username: action.payload };
     case 'LOGOUT':
       return { ...initialState, isLoading: false };
     default:
@@ -47,16 +51,18 @@ export function AppProvider({ children }) {
   const loadData = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      const [profile, expenses, mode, credentials] = await Promise.all([
+      const [profile, expenses, mode, credentials, currentUser] = await Promise.all([
         StorageService.getUserProfile(),
         StorageService.getExpenses(),
         StorageService.getAppMode(),
         StorageService.getLoginCredentials(),
+        AuthService.getCurrentUser(),
       ]);
       if (profile) dispatch({ type: 'SET_PROFILE', payload: profile });
       dispatch({ type: 'SET_EXPENSES', payload: expenses || [] });
       dispatch({ type: 'SET_MODE', payload: mode });
       if (credentials) dispatch({ type: 'SET_LOGIN', payload: true });
+      if (currentUser) dispatch({ type: 'SET_USERNAME', payload: currentUser.username });
     } catch (e) {
       console.error('Failed to load data:', e);
     } finally {
@@ -98,6 +104,7 @@ export function AppProvider({ children }) {
     try {
       await StorageService.saveLoginCredentials(loginId, password);
       dispatch({ type: 'SET_LOGIN', payload: true });
+      dispatch({ type: 'SET_USERNAME', payload: loginId });
     } catch (e) {
       console.error('Failed to set login state:', e);
     }

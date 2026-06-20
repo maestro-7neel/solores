@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
+import { useApp } from '../context/AppContext';
 import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
 // Password strength checker
@@ -30,6 +31,7 @@ const getPasswordStrength = (password) => {
 };
 
 export default function RegisterScreen({ navigation }) {
+  const { reload } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -80,6 +82,7 @@ export default function RegisterScreen({ navigation }) {
     try {
       const result = await AuthService.register(username, password);
       if (result.success) {
+        await reload();
         // Go straight to onboarding after registration
         navigation.replace('Onboarding');
       } else {

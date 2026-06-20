@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Switch,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,7 +38,7 @@ const decisionConfig = {
 };
 
 export default function AICopilotScreen() {
-  const { profile, totalSpent, appMode } = useApp();
+  const { profile, totalSpent, appMode, setMode } = useApp();
   const [spendingAmount, setSpendingAmount] = useState('');
   const [question, setQuestion] = useState('');
   const [aiResponse, setAiResponse] = useState(null);
@@ -90,10 +91,35 @@ export default function AICopilotScreen() {
 
   if (appMode === 'simple') {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: SPACING.xl }]}>
-        <Text style={{ fontSize: 48, marginBottom: 16 }}>🤖</Text>
-        <Text style={styles.lockedTitle}>AI Mode Required</Text>
-        <Text style={styles.lockedSub}>Switch to AI Mode from Dashboard to access your Financial Copilot</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.modeToggleLeft}>
+            <Text style={styles.modeLabel}>📊</Text>
+            <Switch
+              value={false}
+              onValueChange={v => setMode(v ? 'ai' : 'simple')}
+              trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
+              thumbColor={COLORS.textMuted}
+              style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+            />
+          </View>
+          <View style={styles.headerCenter}>
+            <Text style={styles.brand}>Solores</Text>
+            <Text style={styles.brandSub}>Financial Assistant</Text>
+          </View>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.xl }}>
+          <Text style={{ fontSize: 48, marginBottom: 16 }}>🤖</Text>
+          <Text style={styles.lockedTitle}>AI Mode Required</Text>
+          <Text style={styles.lockedSub}>Switch to AI Mode to access your Financial Copilot</Text>
+          <TouchableOpacity
+            style={styles.enableAiBtn}
+            onPress={() => setMode('ai')}
+          >
+            <Ionicons name="sparkles" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+            <Text style={styles.enableAiBtnText}>Enable AI Mode</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -101,6 +127,16 @@ export default function AICopilotScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <View style={styles.modeToggleLeft}>
+          <Text style={styles.modeLabel}>🤖</Text>
+          <Switch
+            value={true}
+            onValueChange={v => setMode(v ? 'ai' : 'simple')}
+            trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
+            thumbColor={COLORS.accent}
+            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+          />
+        </View>
         <View style={styles.headerCenter}>
           <Text style={styles.brand}>Solores</Text>
           <Text style={styles.brandSub}>Financial Assistant</Text>
@@ -198,7 +234,7 @@ export default function AICopilotScreen() {
                 ) : (
                   <>
                     <Ionicons name="sparkles" size={18} color={COLORS.accent} />
-                    <Text style={styles.askBtnText}>Get AI Advice</Text>
+                    <Text style={styles.askBtnText}>Ask Solores</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -420,4 +456,26 @@ const styles = StyleSheet.create({
   histTime: { color: COLORS.textMuted, fontSize: 11 },
   lockedTitle: { color: COLORS.text, fontSize: 20, fontWeight: '800', textAlign: 'center', marginBottom: 8 },
   lockedSub: { color: COLORS.textSecondary, fontSize: 14, textAlign: 'center' },
+  modeToggleLeft: { flexDirection: 'row', alignItems: 'center', gap: 4, position: 'absolute', left: 16, top: STATUS_BAR_HEIGHT + 10 },
+  modeLabel: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '600' },
+  enableAiBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.cardDark,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    marginTop: SPACING.lg,
+    shadowColor: '#1E1214',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  enableAiBtnText: {
+    color: COLORS.textLight,
+    fontWeight: '800',
+    fontSize: 15,
+  },
 });

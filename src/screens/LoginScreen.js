@@ -10,9 +10,11 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
+import { useApp } from '../context/AppContext';
 import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
 export default function LoginScreen({ navigation }) {
+  const { reload } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,6 +53,7 @@ export default function LoginScreen({ navigation }) {
     try {
       const result = await AuthService.login(username, password);
       if (result.success) {
+        await reload();
         // Navigate to onboarding or main app
         // Check if profile exists — if yes go to MainTabs, else Onboarding
         const { StorageService } = require('../services/StorageService');
