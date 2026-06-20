@@ -1,164 +1,187 @@
 # 🤖 Solores
 
-A production-ready Gen-AI powered personal finance management app built with React Native (Expo).
-link of the deployed site: dmkhb48726al6.cloudfront.net
+A production-ready Gen-AI powered personal finance management application built using React Native (Expo).
+
+## 🌐 Live Deployment
+
+[Open Solores](https://dmkhb48726al6.cloudfront.net)
+
+---
+
+## ☁️ AWS Cloud Deployment
+
+Solores is deployed on Amazon Web Services (AWS) using a scalable cloud architecture.
+
+### AWS Services Used
+
+#### Amazon S3
+
+* Hosts the production web build of Solores.
+* Stores static frontend assets including HTML, JavaScript, CSS, images, and application resources.
+
+#### Amazon CloudFront
+
+* Serves Solores through a global Content Delivery Network (CDN).
+* Provides HTTPS access and low-latency content delivery.
+* Improves application performance and scalability.
+
+#### AWS IAM
+
+* Used for secure access control and management of AWS resources during deployment.
+
+### Deployment Architecture
+
+User Browser
+↓
+Amazon CloudFront (CDN)
+↓
+Amazon S3 (Static Website Hosting)
+↓
+Solores Frontend (React Native Web)
+
+### Cloud Features Demonstrated
+
+* Cloud-based web application deployment
+* Static website hosting
+* Global content delivery using CDN
+* HTTPS-secured access
+* Scalable cloud infrastructure
+* Mobile and desktop accessibility
+
+---
 
 ## 🏗️ Folder Structure
 
-```
 Solores/
 ├── App.js                          # Root navigation + auth gate
 ├── app.json                        # Expo config
 ├── babel.config.js
 ├── package.json
 └── src/
-    ├── context/
-    │   └── AppContext.js           # Global state (useReducer + Context)
-    ├── screens/
-    │   ├── OnboardingScreen.js     # 2-step profile setup
-    │   ├── DashboardScreen.js      # Main overview + mode toggle
-    │   ├── ExpenseTrackerScreen.js # Mode 1: Simple tracker + pie chart
-    │   ├── CalendarScreen.js       # Color-coded monthly calendar
-    │   ├── AICopilotScreen.js      # Mode 2: AI budget advisor
-    │   ├── HealthScoreScreen.js    # Financial health score + bar chart
-    │   └── AddExpenseScreen.js     # Add expense modal
-    ├── services/
-    │   ├── StorageService.js       # AsyncStorage layer (swappable w/ API)
-    │   └── AIService.js            # OpenAI integration + mock fallback
-    └── utils/
-        ├── theme.js                # Design system (colors, spacing, etc.)
-        └── financialUtils.js       # Financial calculation helpers
-```
+├── context/
+│   └── AppContext.js
+├── screens/
+│   ├── OnboardingScreen.js
+│   ├── DashboardScreen.js
+│   ├── ExpenseTrackerScreen.js
+│   ├── CalendarScreen.js
+│   ├── AICopilotScreen.js
+│   ├── HealthScoreScreen.js
+│   └── AddExpenseScreen.js
+├── services/
+│   ├── StorageService.js
+│   └── AIService.js
+└── utils/
+├── theme.js
+└── financialUtils.js
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- Expo CLI: `npm install -g expo-cli`
-- Expo Go app on your phone (iOS/Android)
+
+* Node.js 18+
+* Expo CLI
+* Expo Go App
 
 ### Installation
 
 ```bash
-# 1. Clone / extract the project
 cd Solores
-
-# 2. Install dependencies
 npm install
-
-# 3. Start the dev server
 npx expo start
-
-# 4. Scan QR code with Expo Go app
 ```
 
-### Running on simulators
+### Run on Simulators
+
 ```bash
-npx expo start --ios      # iOS Simulator
-npx expo start --android  # Android Emulator
+npx expo start --ios
+npx expo start --android
 ```
 
-## 🤖 Enable Real AI (Optional)
+---
 
-1. Get an OpenAI API key from https://platform.openai.com
-2. Open `src/services/AIService.js`
-3. Set: `const OPENAI_API_KEY = 'sk-your-key-here';`
-4. The app uses `gpt-4o-mini` by default (cost-effective)
+## 🤖 AI-Powered Financial Copilot
 
-Without an API key, the app uses intelligent mock responses that demonstrate all functionality.
+Solores uses Generative AI to provide:
+
+* Spending recommendations
+* Safe spending analysis
+* Budget optimization strategies
+* Personalized financial insights
+* Behavioral finance guidance
+
+Without an API key, the application uses intelligent mock responses to demonstrate functionality.
+
+---
 
 ## ✨ Features
 
 ### Onboarding
-- Choose user type: Student / Working Professional / Other
-- Enter: Monthly Income, Fixed Expenses, Savings Goal
-- Live budget breakdown preview
-- Stored in AsyncStorage
+
+* User profile setup
+* Monthly income capture
+* Fixed expense configuration
+* Savings goal planning
 
 ### Dashboard
-- Real-time budget overview
-- Toggle between Simple and AI mode
-- Recent transactions
-- Savings goal tracking
 
-### Simple Expense Tracker (Mode 1)
-- Add expenses with categories (8 categories)
-- Pie chart breakdown by category
-- Filter transactions by category
-- Delete transactions
-- Color-coded category bars
+* Budget overview
+* Spending insights
+* Savings tracking
+* Recent transactions
 
-### Calendar View
-- Monthly calendar grid
-- Color coding: Green (within limit) / Yellow (moderate) / Red (overspent)
-- Tap any day to see detailed spending
-- Per-day budget vs. spent comparison
+### Expense Tracker
 
-### Solores (Mode 2)
-- Remaining budget + safe daily limit display
-- Ask "Can I spend ₹X?" with any context
-- Quick question shortcuts
-- AI responds with: Decision (Approve/Caution/Reject) + Explanation + Strategy + Adjustment Plan + Behavioral Insight
-- Query history
-- Structured JSON AI response parsing
+* Expense categorization
+* Pie-chart visualization
+* Transaction filtering
+* Expense deletion
+
+### Calendar Analytics
+
+* Monthly spending calendar
+* Daily spending analysis
+* Overspending detection
+
+### Solores AI Copilot
+
+* Budget decision support
+* Spending approval analysis
+* Personalized financial advice
+* Context-aware recommendations
 
 ### Financial Health Score
-- Score 0-100 based on 3 components:
-  - Budget Adherence (40 pts)
-  - Spending Consistency (30 pts)  
-  - Savings Progress (30 pts)
-- 7-day bar chart
-- Personalized tips based on score
-- Reset app option
 
-## 🎨 Design System
+* Budget adherence scoring
+* Savings progress analysis
+* Spending consistency tracking
+* Personalized improvement tips
 
-Dark fintech theme:
-- Background: `#0A0E1A`
-- Accent: `#00D4AA` (teal-green)
-- Status: Green / Yellow / Red for spending health
-- Typography: Bold display weights, clear hierarchy
+---
 
-## 🔧 Backend Connection (Future)
+## 🔧 Future Cloud Enhancements
 
-The `StorageService.js` is designed for easy backend migration:
+Planned AWS integrations:
 
-```javascript
-// Current (AsyncStorage)
-async getUserProfile() {
-  const raw = await AsyncStorage.getItem(KEYS.USER_PROFILE);
-  return raw ? JSON.parse(raw) : null;
-}
+* Amazon Cognito (Authentication)
+* AWS Lambda (Serverless Backend)
+* Amazon SNS (Budget Alerts)
+* Amazon SES (Email Notifications)
+* Amazon RDS PostgreSQL (Persistent Data Storage)
+* Amazon Bedrock (Advanced AI Features)
 
-// Future (Node.js API)
-async getUserProfile() {
-  const res = await fetch(`${API_BASE}/profile`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
-```
+---
 
-## 📦 Dependencies
+## 🏆 Project Highlights
 
-| Package | Purpose |
-|---------|---------|
-| `expo` | Framework |
-| `@react-navigation/*` | Navigation |
-| `@react-native-async-storage/async-storage` | Local storage |
-| `react-native-chart-kit` | Pie + bar charts |
-| `expo-linear-gradient` | UI gradients |
-| `@expo/vector-icons` | Ionicons |
-| `react-native-svg` | Chart rendering |
+* Gen-AI Powered Financial Assistant
+* Dual-Mode User Experience
+* Offline-First Architecture
+* Cloud-Deployed Application
+* Mobile-First Design
+* Scalable AWS Infrastructure
+* Production-Ready Code Structure
 
-## 🏆 Hackathon Notes
-
-This app demonstrates:
-1. **Behavioral Finance AI** - Context-aware spending decisions
-2. **Dual-mode architecture** - Simple vs. advanced user modes  
-3. **Offline-first design** - Works without internet
-4. **Production architecture** - Clean separation of concerns
-5. **Real AI integration path** - Drop in your OpenAI key to activate
-
-Built for: Students, working professionals, Gen-Z/Millennial users
-Focus: Budgeting optimization, NOT stock prediction
+Built for Students, Working Professionals, and Budget-Conscious Users.
