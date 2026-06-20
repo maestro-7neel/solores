@@ -92,107 +92,109 @@ export default function HealthScoreScreen({ navigation }) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Score Hero */}
-        <LinearGradient colors={['#162033', '#1A2235']} style={styles.scoreCard}>
-          {/* Circular score display */}
-          <View style={styles.scoreCircleWrapper}>
-            <View style={[styles.scoreCircle, { borderColor: color }]}>
-              <Text style={[styles.scoreNumber, { color }]}>{score}</Text>
-              <Text style={styles.scoreMax}>/100</Text>
-            </View>
-          </View>
-          <Text style={[styles.scoreLabel, { color }]}>{label}</Text>
-          <Text style={styles.scoreSub}>Your financial health score for this month</Text>
-
-          {/* Score bar */}
-          <View style={styles.scoreBarTrack}>
-            <View style={[styles.scoreBarFill, { width: `${score}%`, backgroundColor: color }]} />
-          </View>
-        </LinearGradient>
-
-        {/* Score Breakdown */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Score Breakdown</Text>
-          <ScoreComponent label="Budget Adherence" score={Math.round(budgetScore)} max={40} color={COLORS.accent} icon="💰" />
-          <ScoreComponent label="Spending Consistency" score={Math.round(overScore)} max={30} color={COLORS.accentBlue} icon="📅" />
-          <ScoreComponent label="Savings Progress" score={Math.round(savScore)} max={30} color={COLORS.accentPurple} icon="🏦" />
-        </View>
-
-        {/* Monthly Stats */}
-        <View style={styles.statsGrid}>
-          <StatCard label="Days Overspent" value={overspentDays} unit="days" color={overspentDays > 5 ? COLORS.danger : COLORS.warning} icon="📊" />
-          <StatCard label="Remaining Budget" value={formatCurrency(remainingBudget, true)} color={remainingBudget > 0 ? COLORS.success : COLORS.danger} icon="💵" />
-          <StatCard label="Transactions" value={monthExpenses.length} unit="this month" color={COLORS.accentBlue} icon="🧾" />
-          <StatCard label="Savings Rate" value={`${Math.max(0, Math.round((projectedSavings / Math.max(profile?.monthlyIncome || 1, 1)) * 100))}%`} color={COLORS.accentPurple} icon="📈" />
-        </View>
-
-        {/* Savings Goal */}
-        {savingsGoal > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>🎯 Savings Goal</Text>
-            <View style={styles.savingsRow}>
-              <View>
-                <Text style={styles.savingsValue}>{formatCurrency(Math.max(projectedSavings, 0))}</Text>
-                <Text style={styles.savingsSub}>of {formatCurrency(savingsGoal)} goal</Text>
+        <View style={styles.content}>
+          {/* Score Hero */}
+          <LinearGradient colors={[COLORS.cardDark, '#301C20']} style={styles.scoreCard}>
+            {/* Circular score display */}
+            <View style={styles.scoreCircleWrapper}>
+              <View style={[styles.scoreCircle, { borderColor: color }]}>
+                <Text style={[styles.scoreNumber, { color }]}>{score}</Text>
+                <Text style={styles.scoreMax}>/100</Text>
               </View>
-              <Text style={[styles.savingsPct, { color: savingsPercent >= 100 ? COLORS.success : COLORS.warning }]}>
-                {Math.max(0, Math.round(savingsPercent))}%
-              </Text>
             </View>
-            <View style={styles.barTrack}>
-              <View style={[styles.barFill, {
-                width: `${Math.max(0, Math.min(savingsPercent, 100))}%`,
-                backgroundColor: savingsPercent >= 100 ? COLORS.success : COLORS.accentBlue,
-              }]} />
-            </View>
-          </View>
-        )}
+            <Text style={[styles.scoreLabel, { color }]}>{label}</Text>
+            <Text style={styles.scoreSub}>Your financial health score for this month</Text>
 
-        {/* 7-Day Spending Chart */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Last 7 Days Spending</Text>
-          {last7Data.some(d => d.spent > 0) ? (
-            <BarChart
-              data={barData}
-              width={width - 64}
-              height={160}
-              chartConfig={{
-                backgroundColor: 'transparent',
-                backgroundGradientFrom: COLORS.surface,
-                backgroundGradientTo: COLORS.surface,
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(0, 212, 170, ${opacity})`,
-                labelColor: () => COLORS.textSecondary,
-                propsForLabels: { fontSize: 10 },
-              }}
-              style={{ borderRadius: RADIUS.md }}
-              showValuesOnTopOfBars={false}
-              withInnerLines={false}
-              fromZero
-            />
-          ) : (
-            <View style={styles.emptyChart}>
-              <Text style={styles.emptyText}>No spending data yet</Text>
+            {/* Score bar */}
+            <View style={styles.scoreBarTrack}>
+              <View style={[styles.scoreBarFill, { width: `${score}%`, backgroundColor: color }]} />
+            </View>
+          </LinearGradient>
+
+          {/* Score Breakdown */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Score Breakdown</Text>
+            <ScoreComponent label="Budget Adherence" score={Math.round(budgetScore)} max={40} color={COLORS.accent} icon="💰" />
+            <ScoreComponent label="Spending Consistency" score={Math.round(overScore)} max={30} color={COLORS.accent} icon="📅" />
+            <ScoreComponent label="Savings Progress" score={Math.round(savScore)} max={30} color={COLORS.accent} icon="🏦" />
+          </View>
+
+          {/* Monthly Stats */}
+          <View style={styles.statsGrid}>
+            <StatCard label="Days Overspent" value={overspentDays} unit="days" color={overspentDays > 5 ? COLORS.danger : COLORS.warning} icon="📊" />
+            <StatCard label="Remaining Budget" value={formatCurrency(remainingBudget, true)} color={remainingBudget > 0 ? COLORS.success : COLORS.danger} icon="💵" />
+            <StatCard label="Transactions" value={monthExpenses.length} unit="this month" color={COLORS.accent} icon="🧾" />
+            <StatCard label="Savings Rate" value={`${Math.max(0, Math.round((projectedSavings / Math.max(profile?.monthlyIncome || 1, 1)) * 100))}%`} color={COLORS.accent} icon="📈" />
+          </View>
+
+          {/* Savings Goal */}
+          {savingsGoal > 0 && (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>🎯 Savings Goal</Text>
+              <View style={styles.savingsRow}>
+                <View>
+                  <Text style={styles.savingsValue}>{formatCurrency(Math.max(projectedSavings, 0))}</Text>
+                  <Text style={styles.savingsSub}>of {formatCurrency(savingsGoal)} goal</Text>
+                </View>
+                <Text style={[styles.savingsPct, { color: savingsPercent >= 100 ? COLORS.success : COLORS.warning }]}>
+                  {Math.max(0, Math.round(savingsPercent))}%
+                </Text>
+              </View>
+              <View style={styles.barTrack}>
+                <View style={[styles.barFill, {
+                  width: `${Math.max(0, Math.min(savingsPercent, 100))}%`,
+                  backgroundColor: savingsPercent >= 100 ? COLORS.success : COLORS.accent,
+                }]} />
+              </View>
             </View>
           )}
-          {/* Daily limit line hint */}
-          <Text style={styles.chartHint}>
-            Daily safe limit: {formatCurrency(dailyLimit)}
-          </Text>
-        </View>
 
-        {/* Tips Based on Score */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>💡 Personalized Tips</Text>
-          {getTips(score, profile?.userType).map((tip, i) => (
-            <View key={i} style={styles.tipRow}>
-              <Text style={styles.tipBullet}>→</Text>
-              <Text style={styles.tipText}>{tip}</Text>
-            </View>
-          ))}
-        </View>
+          {/* 7-Day Spending Chart */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Last 7 Days Spending</Text>
+            {last7Data.some(d => d.spent > 0) ? (
+              <BarChart
+                data={barData}
+                width={width - 64}
+                height={160}
+                chartConfig={{
+                  backgroundColor: 'transparent',
+                  backgroundGradientFrom: COLORS.surface,
+                  backgroundGradientTo: COLORS.surface,
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(243, 158, 148, ${opacity})`,
+                  labelColor: () => COLORS.textSecondary,
+                  propsForLabels: { fontSize: 10 },
+                }}
+                style={{ borderRadius: RADIUS.md }}
+                showValuesOnTopOfBars={false}
+                withInnerLines={false}
+                fromZero
+              />
+            ) : (
+              <View style={styles.emptyChart}>
+                <Text style={styles.emptyText}>No spending data yet</Text>
+              </View>
+            )}
+            {/* Daily limit line hint */}
+            <Text style={styles.chartHint}>
+              Daily safe limit: {formatCurrency(dailyLimit)}
+            </Text>
+          </View>
 
-        <View style={{ height: 100 }} />
+          {/* Tips Based on Score */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>💡 Personalized Tips</Text>
+            {getTips(score, profile?.userType).map((tip, i) => (
+              <View key={i} style={styles.tipRow}>
+                <Text style={styles.tipBullet}>→</Text>
+                <Text style={styles.tipText}>{tip}</Text>
+              </View>
+            ))}
+          </View>
+          
+          <View style={{ height: 100 }} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -250,15 +252,34 @@ const getTips = (score, userType) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md,
-    borderBottomWidth: 1, borderColor: COLORS.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 56,
+    paddingBottom: SPACING.md,
+    backgroundColor: '#FDF2F0', // slight pink
+    borderBottomWidth: 1,
+    borderColor: COLORS.border,
+    position: 'relative',
   },
-  headerTitle: { color: COLORS.text, fontSize: 22, fontWeight: '800' },
-  resetBtn: { padding: 8 },
+  headerTitle: { color: COLORS.text, fontSize: 18, fontWeight: '800' },
+  resetBtn: {
+    position: 'absolute',
+    right: SPACING.lg,
+    top: 50,
+    padding: 8,
+  },
+  content: {
+    padding: SPACING.md,
+    backgroundColor: COLORS.surfaceElevated,
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
+    flex: 1,
+    minHeight: 650,
+  },
   scoreCard: {
-    margin: SPACING.md, borderRadius: RADIUS.xl, padding: SPACING.lg,
-    alignItems: 'center', borderWidth: 1, borderColor: COLORS.border,
+    marginBottom: SPACING.md, borderRadius: RADIUS.lg, padding: SPACING.lg,
+    alignItems: 'center', borderWidth: 1, borderColor: COLORS.borderDark,
   },
   scoreCircleWrapper: { marginBottom: SPACING.md },
   scoreCircle: {
@@ -267,15 +288,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   scoreNumber: { fontSize: 40, fontWeight: '800', letterSpacing: -2 },
-  scoreMax: { color: COLORS.textMuted, fontSize: 12, fontWeight: '600', marginTop: -4 },
+  scoreMax: { color: COLORS.textMutedLight, fontSize: 12, fontWeight: '600', marginTop: -4 },
   scoreLabel: { fontSize: 22, fontWeight: '800', marginBottom: 4 },
-  scoreSub: { color: COLORS.textMuted, fontSize: 12, marginBottom: SPACING.md },
-  scoreBarTrack: { width: '100%', height: 8, backgroundColor: COLORS.border, borderRadius: 4, overflow: 'hidden' },
+  scoreSub: { color: COLORS.textMutedLight, fontSize: 12, marginBottom: SPACING.md },
+  scoreBarTrack: { width: '100%', height: 8, backgroundColor: COLORS.borderDark, borderRadius: 4, overflow: 'hidden' },
   scoreBarFill: { height: 8, borderRadius: 4 },
   card: {
     backgroundColor: COLORS.surface, borderRadius: RADIUS.lg, padding: SPACING.md,
-    marginHorizontal: SPACING.md, marginBottom: SPACING.md,
-    borderWidth: 1, borderColor: COLORS.border,
+    marginBottom: SPACING.md, borderWidth: 1, borderColor: COLORS.border,
   },
   cardTitle: { color: COLORS.text, fontWeight: '700', fontSize: 15, marginBottom: SPACING.md },
   scoreComp: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
@@ -285,9 +305,9 @@ const styles = StyleSheet.create({
   compScore: { fontSize: 13, fontWeight: '700' },
   compBarTrack: { height: 4, backgroundColor: COLORS.border, borderRadius: 2, overflow: 'hidden' },
   compBarFill: { height: 4, borderRadius: 2 },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: SPACING.md, gap: SPACING.sm, marginBottom: SPACING.md },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm, marginBottom: SPACING.md },
   statCard: {
-    width: (width - 56) / 2, backgroundColor: COLORS.surface,
+    width: (width - 40) / 2, backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md, padding: SPACING.md,
     borderWidth: 1, borderColor: COLORS.border, alignItems: 'center',
   },

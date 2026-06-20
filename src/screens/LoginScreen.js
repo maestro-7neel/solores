@@ -1,392 +1,304 @@
-// src/screens/LoginScreen.js - Login/Register screen
-import React, { useState } from 'react';
+// src/screens/LoginScreen.js
+// Full-featured login screen matching the AI Financial Copilot dark fintech theme
+
+import React, { useState, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator,
+  View, Text, StyleSheet, TouchableOpacity, TextInput,
+  KeyboardAvoidingView, Platform, ScrollView,
+  ActivityIndicator, Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { StorageService } from '../services/StorageService';
-import { COLORS, SPACING, RADIUS, SHADOWS } from '../utils/theme';
+import { AuthService } from '../services/AuthService';
+import { COLORS, SPACING, RADIUS } from '../utils/theme';
 
-export default function LoginScreen({ onLoginSuccess }) {
-  const [isLogin, setIsLogin] = useState(true); // true = login, false = register
-  const [loginId, setLoginId] = useState('');
+export default function LoginScreen({ navigation }) {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [focusedField, setFocusedField] = useState(null);
 
-  const handleToggleMode = () => {
-    setLoginId('');
-    setPassword('');
-    setConfirmPassword('');
-    setIsLogin(!isLogin);
-  };
+  // Shake animation for error
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
-  const validateInputs = () => {
-    if (!loginId.trim()) {
-      Alert.alert('Error', 'Please enter a login ID');
-      return false;
-    }
-    if (loginId.length < 3) {
-      Alert.alert('Error', 'Login ID must be at least 3 characters');
-      return false;
-    }
-    if (!password.trim()) {
-      Alert.alert('Error', 'Please enter a password');
-      return false;
-    }
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return false;
-    }
-    if (!isLogin && password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return false;
-    }
-    return true;
-  };
-
-  const handleRegister = async () => {
-    if (!validateInputs()) return;
-
-    setIsLoading(true);
-    try {
-      // Check if login ID already exists
-      const existing = await StorageService.getLoginCredentials();
-      if (existing && existing.loginId === loginId) {
-        Alert.alert('Error', 'This login ID is already registered. Please login or use a different ID.');
-        setIsLoading(false);
-        return;
-      }
-
-      // Save new credentials
-      await StorageService.saveLoginCredentials(loginId, password);
-      Alert.alert('Success', 'Account created and logged in!', [
-        { text: 'OK', onPress: onLoginSuccess },
-      ]);
-    } catch (e) {
-      Alert.alert('Error', 'Failed to create account. Please try again.');
-      console.error('Register error:', e);
-    } finally {
-      setIsLoading(false);
-    }
+  const triggerShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 10, duration: 60, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -10, duration: 60, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 8, duration: 60, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -8, duration: 60, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 60, useNativeDriver: true }),
+    ]).start();
   };
 
   const handleLogin = async () => {
-    if (!loginId.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter login ID and password');
+    setError('');
+
+    if (!username.trim()) {
+      setError('Please enter your username');
+      triggerShake();
+      return;
+    }
+    if (!password) {
+      setError('Please enter your password');
+      triggerShake();
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
     try {
-      const isValid = await StorageService.validateLogin(loginId, password);
-      if (isValid) {
-        Alert.alert('Success', 'Login successful!');
-        onLoginSuccess();
+      const result = await AuthService.login(username, password);
+      if (result.success) {
+        // Navigate to onboarding or main app
+        // Check if profile exists — if yes go to MainTabs, else Onboarding
+        const { StorageService } = require('../services/StorageService');
+        const profile = await StorageService.getUserProfile();
+        navigation.replace(profile ? 'MainTabs' : 'Onboarding');
       } else {
-        Alert.alert('Error', 'Invalid login ID or password');
+        setError(result.error);
+        triggerShake();
       }
     } catch (e) {
-      Alert.alert('Error', 'Login failed. Please try again.');
-      console.error('Login error:', e);
+      setError('Something went wrong. Please try again.');
+      triggerShake();
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
+  const passwordRef = useRef(null);
+
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Hero Section */}
-        <LinearGradient colors={['#081822', '#06121A']} style={styles.heroSection}>
-          <View style={styles.heroIcon}>
-            <Ionicons name="wallet" size={48} color={COLORS.accent} />
-          </View>
-          <Text style={styles.appName}>solores</Text>
-          <Text style={styles.tagline}>Smart Financial Management</Text>
-        </LinearGradient>
-
-        {/* Form Card */}
-        <View style={[styles.formCard, SHADOWS.card]}>
-          {/* Tab Toggle */}
-          <View style={styles.tabToggle}>
-            <TouchableOpacity
-              style={[styles.tab, isLogin && styles.tabActive]}
-              onPress={() => setIsLogin(true)}
-            >
-              <Text style={[styles.tabText, isLogin && styles.tabTextActive]}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, !isLogin && styles.tabActive]}
-              onPress={() => setIsLogin(false)}
-            >
-              <Text style={[styles.tabText, !isLogin && styles.tabTextActive]}>Register</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Form Title */}
-          <Text style={styles.formTitle}>
-            {isLogin ? 'Welcome Back' : 'Create Account'}
-          </Text>
-          <Text style={styles.formSubtitle}>
-            {isLogin
-              ? 'Sign in with your login ID and password'
-              : 'Set up a new account to get started'}
-          </Text>
-
-          {/* Login ID Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Login ID</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="person-outline" size={18} color={COLORS.textSecondary} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your unique login ID"
-                placeholderTextColor={COLORS.textMuted}
-                value={loginId}
-                onChangeText={setLoginId}
-                editable={!isLoading}
-                autoCapitalize="none"
-              />
+    <LinearGradient colors={[COLORS.background, COLORS.surfaceElevated, COLORS.background]} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Logo */}
+          <View style={styles.logoSection}>
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoEmoji}>🤖</Text>
             </View>
+            <Text style={styles.appName}>Solores</Text>
+            <Text style={styles.tagline}>Your AI Financial Copilot</Text>
           </View>
 
-          {/* Password Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="lock-closed-outline" size={18} color={COLORS.textSecondary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { flex: 1 }]}
-                placeholder="Enter password (min 6 characters)"
-                placeholderTextColor={COLORS.textMuted}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                editable={!isLoading}
-                autoCapitalize="none"
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          {/* Card */}
+          <Animated.View style={[styles.card, { transform: [{ translateX: shakeAnim }] }]}>
+            <Text style={styles.cardTitle}>Welcome back</Text>
+            <Text style={styles.cardSub}>Sign in to continue</Text>
+
+            {/* Error Banner */}
+            {error ? (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle" size={16} color={COLORS.danger} />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
+
+            {/* Username Field */}
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Username</Text>
+              <View style={[
+                styles.inputWrapper,
+                focusedField === 'username' && styles.inputWrapperFocused,
+                error && !username && styles.inputWrapperError,
+              ]}>
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name="person-outline"
                   size={18}
-                  color={COLORS.textSecondary}
+                  color={focusedField === 'username' ? COLORS.accent : COLORS.textMuted}
+                  style={styles.inputIcon}
                 />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Confirm Password Input (Register Only) */}
-          {!isLogin && (
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Confirm Password</Text>
-              <View style={styles.inputWrapper}>
-                <Ionicons name="lock-closed-outline" size={18} color={COLORS.textSecondary} style={styles.inputIcon} />
                 <TextInput
-                  style={[styles.input, { flex: 1 }]}
-                  placeholder="Confirm your password"
+                  style={styles.input}
+                  value={username}
+                  onChangeText={(v) => { setUsername(v); setError(''); }}
+                  placeholder="Enter your username"
                   placeholderTextColor={COLORS.textMuted}
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry={!showPassword}
-                  editable={!isLoading}
                   autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  onFocus={() => setFocusedField('username')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </View>
             </View>
-          )}
 
-          {/* Action Button */}
-          <TouchableOpacity
-            style={[styles.submitBtn, isLoading && styles.submitBtnDisabled]}
-            onPress={isLogin ? handleLogin : handleRegister}
-            disabled={isLoading}
-          >
-            <LinearGradient
-              colors={isLoading ? [COLORS.textMuted, COLORS.textMuted] : [COLORS.accent, '#00B894']}
-              style={styles.submitBtnGradient}
+            {/* Password Field */}
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Password</Text>
+              <View style={[
+                styles.inputWrapper,
+                focusedField === 'password' && styles.inputWrapperFocused,
+                error && !password && styles.inputWrapperError,
+              ]}>
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={18}
+                  color={focusedField === 'password' ? COLORS.accent : COLORS.textMuted}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  ref={passwordRef}
+                  style={styles.input}
+                  value={password}
+                  onChangeText={(v) => { setPassword(v); setError(''); }}
+                  placeholder="Enter your password"
+                  placeholderTextColor={COLORS.textMuted}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  returnKeyType="done"
+                  onSubmitEditing={handleLogin}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(v => !v)}
+                  style={styles.eyeBtn}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={18}
+                    color={COLORS.textMuted}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Login Button */}
+            <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={handleLogin}
+              disabled={loading}
+              activeOpacity={0.85}
             >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#000" />
-              ) : (
-                <Text style={styles.submitBtnText}>
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                </Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
-
-          {/* Toggle Text */}
-          <View style={styles.toggleContainer}>
-            <Text style={styles.toggleText}>
-              {isLogin ? "Don't have an account? " : 'Already have an account? '}
-            </Text>
-            <TouchableOpacity onPress={handleToggleMode} disabled={isLoading}>
-              <Text style={styles.toggleLink}>
-                {isLogin ? 'Register' : 'Login'}
-              </Text>
+              <View style={styles.loginBtnInner}>
+                {loading ? (
+                  <ActivityIndicator color={COLORS.textLight} size="small" />
+                ) : (
+                  <>
+                    <Text style={styles.loginBtnText}>Sign In</Text>
+                    <Ionicons name="arrow-forward" size={18} color={COLORS.textLight} />
+                  </>
+                )}
+              </View>
             </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* Footer Info */}
-        <View style={styles.footer}>
-          <Ionicons name="shield-checkmark" size={20} color={COLORS.accentBlue} />
-          <Text style={styles.footerText}>Your credentials are stored securely on your device</Text>
-        </View>
-      </ScrollView>
-    </View>
+            {/* Divider */}
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            {/* Register Link */}
+            <TouchableOpacity
+              style={styles.registerBtn}
+              onPress={() => navigation.navigate('Register')}
+            >
+              <Text style={styles.registerText}>Don't have an account? </Text>
+              <Text style={styles.registerLink}>Create one →</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Footer */}
+          <Text style={styles.footer}>Your data stays on your device 🔒</Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
+  container: { flex: 1 },
+  scroll: {
+    flexGrow: 1, justifyContent: 'center',
+    padding: SPACING.lg, paddingTop: 60, paddingBottom: 40,
   },
-  scrollContent: {
-    paddingVertical: SPACING.lg,
-  },
-  heroSection: {
-    paddingVertical: SPACING.xl * 1.5,
-    alignItems: 'center',
-    marginBottom: SPACING.lg,
-  },
-  heroIcon: {
-    marginBottom: SPACING.md,
-  },
-  appName: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: COLORS.accent,
-    letterSpacing: -1,
-    marginBottom: 8,
-  },
-  tagline: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
-  },
-  formCard: {
-    marginHorizontal: SPACING.md,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  tabToggle: {
-    flexDirection: 'row',
-    backgroundColor: '#0A111C',
-    borderRadius: RADIUS.md,
-    marginBottom: SPACING.lg,
-    padding: 4,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: SPACING.sm,
-    alignItems: 'center',
-    borderRadius: RADIUS.sm,
-  },
-  tabActive: {
-    backgroundColor: COLORS.accent,
-  },
-  tabText: {
-    color: COLORS.textMuted,
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  tabTextActive: {
-    color: '#000',
-  },
-  formTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: COLORS.text,
+  logoSection: { alignItems: 'center', marginBottom: SPACING.xl },
+  logoCircle: {
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: COLORS.accentSoft,
+    borderWidth: 1.5, borderColor: COLORS.accent,
+    justifyContent: 'center', alignItems: 'center',
     marginBottom: SPACING.sm,
   },
-  formSubtitle: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: SPACING.lg,
-    lineHeight: 18,
+  logoEmoji: { fontSize: 32 },
+  appName: {
+    color: COLORS.text, fontSize: 28, fontWeight: '800',
+    letterSpacing: -0.5,
   },
-  inputGroup: {
+  tagline: { color: COLORS.textSecondary, fontSize: 13, marginTop: 4 },
+  card: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.lg,
+    borderWidth: 1, borderColor: COLORS.border,
+  },
+  cardTitle: { color: COLORS.text, fontSize: 22, fontWeight: '800', marginBottom: 4 },
+  cardSub: { color: COLORS.textSecondary, fontSize: 14, marginBottom: SPACING.lg },
+  errorBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: COLORS.dangerSoft,
+    borderRadius: RADIUS.md, padding: 10,
     marginBottom: SPACING.md,
+    borderWidth: 1, borderColor: COLORS.danger + '44',
   },
-  inputLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-    marginBottom: 8,
+  errorText: { color: COLORS.danger, fontSize: 13, flex: 1 },
+  fieldGroup: { marginBottom: SPACING.md },
+  fieldLabel: {
+    color: COLORS.textSecondary, fontSize: 12,
+    fontWeight: '600', marginBottom: 6,
+    textTransform: 'uppercase', letterSpacing: 0.5,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#0A111C',
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: COLORS.surfaceElevated,
     borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: '#14213A',
-    paddingHorizontal: SPACING.md,
-    height: 48,
+    borderWidth: 1.5, borderColor: COLORS.border,
+    paddingHorizontal: 12,
   },
-  inputIcon: {
-    marginRight: SPACING.sm,
-  },
+  inputWrapperFocused: { borderColor: COLORS.accent },
+  inputWrapperError: { borderColor: COLORS.danger },
+  inputIcon: { marginRight: 8 },
   input: {
-    flex: 1,
-    color: COLORS.text,
-    fontSize: 14,
+    flex: 1, color: COLORS.text,
+    fontSize: 15, paddingVertical: 14,
     fontWeight: '500',
   },
-  submitBtn: {
-    marginTop: SPACING.lg,
-    borderRadius: RADIUS.md,
-    overflow: 'hidden',
+  eyeBtn: { padding: 4 },
+  loginBtn: {
+    borderRadius: RADIUS.full, overflow: 'hidden',
+    marginTop: SPACING.sm, marginBottom: SPACING.md,
   },
-  submitBtnDisabled: {
-    opacity: 0.7,
+  loginBtnInner: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: 8,
+    paddingVertical: 15,
+    backgroundColor: COLORS.cardDark,
   },
-  submitBtnGradient: {
-    paddingVertical: SPACING.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+  loginBtnText: { color: COLORS.textLight, fontSize: 16, fontWeight: '800' },
+  dividerRow: {
+    flexDirection: 'row', alignItems: 'center',
+    gap: 10, marginBottom: SPACING.md,
   },
-  submitBtnText: {
-    color: '#000',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: SPACING.lg,
-  },
-  toggleText: {
-    color: COLORS.textSecondary,
-    fontSize: 13,
-  },
-  toggleLink: {
-    color: COLORS.accent,
-    fontWeight: '700',
-    fontSize: 13,
-  },
+  dividerLine: { flex: 1, height: 1, backgroundColor: COLORS.border },
+  dividerText: { color: COLORS.textMuted, fontSize: 12 },
+  registerBtn: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  registerText: { color: COLORS.textSecondary, fontSize: 14 },
+  registerLink: { color: COLORS.accent, fontSize: 14, fontWeight: '700' },
   footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: SPACING.sm,
-    marginTop: SPACING.xl,
-    marginHorizontal: SPACING.md,
-    paddingVertical: SPACING.lg,
-  },
-  footerText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    maxWidth: 250,
-    textAlign: 'center',
+    color: COLORS.textMuted, fontSize: 11,
+    textAlign: 'center', marginTop: SPACING.xl,
   },
 });

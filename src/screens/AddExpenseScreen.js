@@ -124,11 +124,11 @@ export default function AddExpenseScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: COLORS.surfaceElevated },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md,
-    borderBottomWidth: 1, borderColor: COLORS.border,
+    borderBottomWidth: 1, borderColor: COLORS.border, backgroundColor: COLORS.surfaceElevated,
   },
   headerTitle: { color: COLORS.text, fontSize: 17, fontWeight: '700' },
   closeBtn: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center' },
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   amountSection: { alignItems: 'center', paddingVertical: SPACING.xl },
   amountLabel: { color: COLORS.textSecondary, fontSize: 14, marginBottom: SPACING.md },
   amountRow: { flexDirection: 'row', alignItems: 'center' },
-  rupeeSign: { color: COLORS.accent, fontSize: 36, fontWeight: '700', marginRight: 6 },
+  rupeeSign: { color: COLORS.text, fontSize: 36, fontWeight: '700', marginRight: 6 },
   amountInput: { color: COLORS.text, fontSize: 52, fontWeight: '800', minWidth: 100 },
   sectionLabel: { color: COLORS.textSecondary, fontSize: 13, fontWeight: '600', marginBottom: SPACING.sm, textTransform: 'uppercase', letterSpacing: 0.5 },
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm, marginBottom: SPACING.lg },
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
   previewAmount: { color: COLORS.text, fontSize: 20, fontWeight: '800' },
   previewCat: { color: COLORS.textSecondary, fontSize: 13 },
   submitBtn: {
-    backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
+    backgroundColor: COLORS.cardDark, borderRadius: RADIUS.full,
     padding: 16, alignItems: 'center', marginBottom: 40,
   },
-  submitText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
+  submitText: { color: COLORS.textLight, fontWeight: '800', fontSize: 16 },
 });

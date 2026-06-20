@@ -32,44 +32,46 @@ export default function DashboardScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <LinearGradient colors={['#05101C', '#071524']} style={styles.header}>
+        <LinearGradient colors={['#FDF2F0', COLORS.background]} style={styles.header}>
           <View style={styles.headerTop}>
-            <View>
+            <View style={styles.modeToggleLeft}>
+              <Text style={styles.modeLabel}>{appMode === 'ai' ? '🤖' : '📊'}</Text>
+              <Switch
+                value={appMode === 'ai'}
+                onValueChange={v => setMode(v ? 'ai' : 'simple')}
+                trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
+                thumbColor={appMode === 'ai' ? COLORS.accent : COLORS.textMuted}
+                style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+              />
+            </View>
+            <View style={styles.headerCenter}>
               <Text style={styles.greeting}>Good {getTimeOfDay()},</Text>
               <Text style={styles.userName}>{getProfileLabel(profile?.userType)} 👋</Text>
             </View>
-            <View style={styles.headerRightGroup}>
-              <View style={styles.modeToggle}>
-                <Text style={styles.modeLabel}>{appMode === 'ai' ? '🤖 AI' : '📊 Simple'}</Text>
-                <Switch
-                  value={appMode === 'ai'}
-                  onValueChange={v => setMode(v ? 'ai' : 'simple')}
-                  trackColor={{ false: COLORS.border, true: COLORS.accentSoft }}
-                  thumbColor={appMode === 'ai' ? COLORS.accent : COLORS.textMuted}
-                />
-              </View>
-              <TouchableOpacity
-                style={styles.logoutBtn}
-                onPress={logout}
-              >
-                <Ionicons name="log-out" size={20} color={COLORS.danger} />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={styles.logoutBtnRight}
+              onPress={async () => {
+                await logout();
+                navigation.replace('Login');
+              }}
+            >
+              <Ionicons name="log-out" size={20} color={COLORS.danger} />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.monthLabel}>{getCurrentMonthLabel()}</Text>
+          <Text style={styles.monthLabelCentered}>{getCurrentMonthLabel()}</Text>
         </LinearGradient>
 
         <View style={styles.content}>
           {/* Budget Hero Card */}
           <View style={[styles.heroCard, SHADOWS.card]}>
             <LinearGradient
-              colors={['#162033', '#1A2235']}
-              style={styles.heroGradient}
+              colors={['#FEDAD7', '#FADEDC']}
+              style={styles.heroPanel}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
               <Text style={styles.heroLabel}>Remaining Budget</Text>
-              <Text style={[styles.heroAmount, { color: availableBudget > 0 ? COLORS.accent : COLORS.danger }]}>
+              <Text style={styles.heroAmount}>
                 {formatCurrency(availableBudget)}
               </Text>
 
@@ -77,14 +79,14 @@ export default function DashboardScreen({ navigation }) {
               <View style={styles.barTrack}>
                 <View style={[styles.barFill, {
                   width: `${spentPercent}%`,
-                  backgroundColor: spentPercent > 90 ? COLORS.danger : spentPercent > 70 ? COLORS.warning : COLORS.accent,
+                  backgroundColor: spentPercent > 90 ? COLORS.danger : spentPercent > 70 ? COLORS.warning : COLORS.text,
                 }]} />
               </View>
 
               <View style={styles.heroRow}>
-                <StatMini label="Spent" value={formatCurrency(totalSpent, true)} color={COLORS.warning} />
+                <StatMini label="Spent" value={formatCurrency(totalSpent, true)} color={COLORS.danger} />
                 <StatMini label="Budget" value={formatCurrency(disposable, true)} color={COLORS.text} />
-                <StatMini label="Daily Limit" value={formatCurrency(dailyLimit, true)} color={COLORS.accentBlue} />
+                <StatMini label="Daily Limit" value={formatCurrency(dailyLimit, true)} color={COLORS.text} />
               </View>
             </LinearGradient>
           </View>
@@ -95,13 +97,13 @@ export default function DashboardScreen({ navigation }) {
               icon="calendar-outline"
               label="Days Left"
               value={remainingDays}
-              color={COLORS.accentBlue}
+              color={COLORS.accent}
             />
             <StatCard
               icon="trending-down-outline"
               label="Transactions"
               value={monthExpenses.length}
-              color={COLORS.accentPurple}
+              color={COLORS.accent}
             />
             <StatCard
               icon="heart-outline"
@@ -118,18 +120,14 @@ export default function DashboardScreen({ navigation }) {
               style={[styles.aiBanner, SHADOWS.glow]}
               onPress={() => navigation.navigate('solores')}
             >
-              <LinearGradient
-                colors={[COLORS.accentSoft, '#00D4AA11']}
-                style={styles.aiBannerInner}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-              >
+              <View style={styles.aiBannerInner}>
                 <Text style={styles.aiBannerIcon}>🤖</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.aiBannerTitle}>solores Active</Text>
                   <Text style={styles.aiBannerSub}>Ask "Can I spend ₹500?" →</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={COLORS.accent} />
-              </LinearGradient>
+              </View>
             </TouchableOpacity>
           )}
 
@@ -175,12 +173,12 @@ export default function DashboardScreen({ navigation }) {
             style={styles.fab}
             onPress={() => navigation.navigate('AddExpense')}
           >
-            <LinearGradient colors={[COLORS.accent, '#00B894']} style={styles.fabInner}>
-              <Ionicons name="add" size={28} color="#000" />
-            </LinearGradient>
+            <View style={styles.fabInner}>
+              <Ionicons name="add" size={28} color="#FFFFFF" />
+            </View>
           </TouchableOpacity>
 
-          <View style={{ height: 80 }} />
+          <View style={{ height: 100 }} />
         </View>
       </ScrollView>
     </View>
@@ -190,8 +188,8 @@ export default function DashboardScreen({ navigation }) {
 function StatCard({ icon, label, value, color, sub }) {
   return (
     <View style={styles.statCard}>
-      <Ionicons name={icon} size={20} color={color} style={{ marginBottom: 6 }} />
-      <Text style={[styles.statValue, { color }]}>{value}</Text>
+      <Ionicons name={icon} size={18} color={color} style={{ marginBottom: 6 }} />
+      <Text style={[styles.statValue, { color: COLORS.text }]}>{value}</Text>
       {sub && <Text style={styles.statSub}>{sub}</Text>}
       <Text style={styles.statLabel}>{label}</Text>
     </View>
@@ -238,36 +236,43 @@ const getProfileLabel = (type) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.lg },
-  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  headerRightGroup: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
+  headerTop: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'relative', height: 48, marginBottom: 6 },
+  modeToggleLeft: { flexDirection: 'row', alignItems: 'center', gap: 4, position: 'absolute', left: 0 },
+  headerCenter: { alignItems: 'center' },
   greeting: { color: COLORS.textSecondary, fontSize: 13 },
-  userName: { color: COLORS.text, fontSize: 20, fontWeight: '800' },
-  modeToggle: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  userName: { color: COLORS.text, fontSize: 22, fontWeight: '800' },
   modeLabel: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '600' },
-  logoutBtn: { padding: 6 },
-  monthLabel: { color: COLORS.textMuted, fontSize: 12 },
-  content: { padding: SPACING.md },
-  heroCard: { borderRadius: RADIUS.xl, marginBottom: SPACING.md, overflow: 'hidden' },
-  heroGradient: { padding: SPACING.lg, borderRadius: RADIUS.xl, borderWidth: 1, borderColor: '#14213A', backgroundColor: '#0A111C' },
+  logoutBtnRight: { position: 'absolute', right: 0, padding: 6 },
+  monthLabelCentered: { color: COLORS.textMuted, fontSize: 12, textAlign: 'center', marginTop: 2 },
+  content: {
+    padding: SPACING.md,
+    backgroundColor: COLORS.surfaceElevated,
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
+    flex: 1,
+    minHeight: 650,
+  },
+  heroCard: { borderRadius: RADIUS.lg, marginBottom: SPACING.md, overflow: 'hidden' },
+  heroPanel: { padding: SPACING.lg, borderRadius: RADIUS.lg, borderWidth: 1, borderColor: COLORS.border },
   heroLabel: { color: COLORS.textSecondary, fontSize: 13, fontWeight: '600', marginBottom: 6 },
-  heroAmount: { fontSize: 38, fontWeight: '800', letterSpacing: -1, marginBottom: 16 },
-  barTrack: { height: 6, backgroundColor: '#14213A', borderRadius: 3, marginBottom: 16, overflow: 'hidden' },
-  barFill: { height: 6, borderRadius: 3 },
+  heroAmount: { fontSize: 38, fontWeight: '800', letterSpacing: -1, marginBottom: 16, color: COLORS.text },
+  barTrack: { height: 8, backgroundColor: '#FFF5F4', borderRadius: 4, marginBottom: 16, overflow: 'hidden' },
+  barFill: { height: 8, borderRadius: 4 },
   heroRow: { flexDirection: 'row', justifyContent: 'space-between' },
   miniValue: { fontSize: 15, fontWeight: '700' },
   miniLabel: { color: COLORS.textSecondary, fontSize: 11, marginTop: 2 },
   statsRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.md },
   statCard: {
-    flex: 1, backgroundColor: '#0A111C', borderRadius: RADIUS.md,
-    padding: SPACING.md, alignItems: 'center', borderWidth: 1, borderColor: '#14213A',
+    flex: 1, backgroundColor: COLORS.surface, borderRadius: RADIUS.md,
+    padding: SPACING.md, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border,
   },
-  statValue: { fontSize: 20, fontWeight: '800' },
+  statValue: { fontSize: 20, fontWeight: '800', color: COLORS.text },
   statLabel: { color: COLORS.textMuted, fontSize: 11, marginTop: 2 },
   statSub: { color: COLORS.textSecondary, fontSize: 10, fontWeight: '600' },
   aiBanner: { borderRadius: RADIUS.md, overflow: 'hidden', marginBottom: SPACING.md },
-  aiBannerInner: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, gap: 10 },
+  aiBannerInner: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, gap: 10, backgroundColor: COLORS.accentSoft, borderWidth: 1, borderColor: COLORS.accent, borderRadius: RADIUS.md },
   aiBannerIcon: { fontSize: 24 },
-  aiBannerTitle: { color: COLORS.accent, fontWeight: '700', fontSize: 14 },
+  aiBannerTitle: { color: COLORS.text, fontWeight: '700', fontSize: 14 },
   aiBannerSub: { color: COLORS.textSecondary, fontSize: 12 },
   card: {
     backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,
@@ -276,7 +281,7 @@ const styles = StyleSheet.create({
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.sm },
   cardTitle: { color: COLORS.text, fontWeight: '700', fontSize: 15, marginBottom: SPACING.sm },
-  seeAll: { color: COLORS.accent, fontSize: 13, fontWeight: '600' },
+  seeAll: { color: COLORS.text, fontSize: 13, fontWeight: '700' },
   savingsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   savingsAmount: { color: COLORS.text, fontSize: 20, fontWeight: '800' },
   savingsStatus: { color: COLORS.textSecondary, fontSize: 13 },
@@ -284,12 +289,12 @@ const styles = StyleSheet.create({
   expIcon: { width: 40, height: 40, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
   expNote: { color: COLORS.text, fontWeight: '600', fontSize: 14 },
   expCat: { color: COLORS.textMuted, fontSize: 12 },
-  expAmount: { color: COLORS.warning, fontWeight: '700', fontSize: 14 },
+  expAmount: { color: COLORS.danger, fontWeight: '700', fontSize: 14 },
   emptyState: { alignItems: 'center', paddingVertical: SPACING.lg },
   emptyIcon: { fontSize: 36, marginBottom: 8 },
   emptyText: { color: COLORS.textSecondary, fontSize: 14, marginBottom: 12 },
   addBtn: { backgroundColor: COLORS.accentSoft, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.full },
-  addBtnText: { color: COLORS.accent, fontWeight: '700', fontSize: 14 },
+  addBtnText: { color: COLORS.text, fontWeight: '700', fontSize: 14 },
   fab: { position: 'absolute', bottom: 100, right: SPACING.md, borderRadius: RADIUS.full, ...SHADOWS.glow },
-  fabInner: { width: 56, height: 56, borderRadius: RADIUS.full, justifyContent: 'center', alignItems: 'center' },
+  fabInner: { width: 56, height: 56, borderRadius: RADIUS.full, backgroundColor: COLORS.accent, justifyContent: 'center', alignItems: 'center' },
 });

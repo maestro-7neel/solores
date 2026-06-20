@@ -2,51 +2,53 @@
 // Modern minimal aesthetic: Dark teal background with white card-based UI and purple accents
 
 export const COLORS = {
-  // Base - Dark teal background with white cards
-  background: '#0D2D3D',
+  // Base - Warm cream/beige background, white card-based sheets, rich dark rose-charcoal contrast panels
+  background: '#FAF6F2',
   surface: '#FFFFFF',
-  surfaceElevated: '#F5F5F5',
+  surfaceElevated: '#F5ECE4',
   card: '#FFFFFF',
+  cardDark: '#1E1214',      // Deep rich dark rose-charcoal
 
-  // Accent palette - Purple/Lavender theme
-  accent: '#A78BFA',        // Lavender purple
-  accentSoft: '#A78BFA22',
-  accentBlue: '#818CF8',    // Indigo
-  accentPurple: '#C4B5FD',  // Light purple
-  accentAmber: '#FBBF24',
+  // Accent palette - Coral-pink theme
+  accent: '#F39E94',        // Warm coral-pink
+  accentSoft: '#F39E9422',  // Transparent coral-pink
+  accentBlue: '#8C9A86',    // Warm sage green (matches coral-pink perfectly)
+  accentPurple: '#E5C0BE',  // Soft rose
+  accentAmber: '#E6A15C',   // Muted gold
 
   // Status colors
-  success: '#10B981',
-  successSoft: '#10B98122',
-  warning: '#F59E0B',
-  warningSoft: '#F59E0B22',
-  danger: '#EF4444',
-  dangerSoft: '#EF444422',
+  success: '#75A88F',       // Soft green
+  successSoft: '#75A88F22',
+  warning: '#E6A15C',
+  warningSoft: '#E6A15C22',
+  danger: '#D9716C',        // Soft red/pinkish-red
+  dangerSoft: '#D9716C22',
 
-  // Typography - Dark text on light cards, light text on dark background
-  text: '#1F2937',           // Dark gray for card text
-  textSecondary: '#4B5563',  // Medium gray for secondary text
-  textMuted: '#6B7280',      // Light gray for muted text
-  surfaceText: '#1F2937',    // Dark text on cards
+  // Typography - Dark rose-charcoal text on light sheets, light text on dark backgrounds
+  text: '#1E1214',           // Dark rose-charcoal
+  textSecondary: '#6E5C5E',  // Muted rose-gray
+  textMuted: '#9B8789',      // Lighter rose-gray
+  surfaceText: '#1E1214',
   
   // Light text for dark backgrounds
   textLight: '#FFFFFF',
-  textSecondaryLight: '#E5E7EB',
-  textMutedLight: '#D1D5DB',
+  textSecondaryLight: '#EBDAD8',
+  textMutedLight: '#BC9F9F',
 
   // Borders
-  border: '#E5E7EB',
-  borderLight: '#F3F4F6',
+  border: '#E8E1DA',
+  borderLight: '#F3ECE6',
+  borderDark: '#352125',
 
   // Calendar colors
-  calGreen: '#10B981',
-  calYellow: '#F59E0B',
-  calRed: '#EF4444',
-  calEmpty: '#F0F0F0',
+  calGreen: '#75A88F',
+  calYellow: '#E6A15C',
+  calRed: '#D9716C',
+  calEmpty: '#F3ECE6',
 
-  // Gradient stops
-  gradientStart: '#0D2D3D',
-  gradientEnd: '#0D2D3D',
+  // Gradient stops for backgrounds
+  gradientStart: '#1E1214',
+  gradientEnd: '#301C20',
 };
 
 export const FONTS = {
@@ -68,9 +70,9 @@ export const SPACING = {
 
 export const RADIUS = {
   sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  md: 14,
+  lg: 24,
+  xl: 32,
   full: 999,
 };
 
@@ -83,7 +85,7 @@ export const SHADOWS = {
     elevation: 5,
   },
   glow: {
-    shadowColor: '#A78BFA',
+    shadowColor: '#C3C1FF',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 12,

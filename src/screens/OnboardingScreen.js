@@ -35,7 +35,7 @@ export default function OnboardingScreen({ navigation }) {
   };
 
   return (
-    <LinearGradient colors={['#05060A', '#071524', '#05060A']} style={styles.container}>
+    <LinearGradient colors={[COLORS.background, COLORS.surfaceElevated, COLORS.background]} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           {/* Header */}
@@ -114,12 +114,12 @@ export default function OnboardingScreen({ navigation }) {
                   <Text style={styles.summaryTitle}>Budget Breakdown</Text>
                   <Row label="Income" value={`₹${parseFloat(monthlyIncome) || 0}`} />
                   <Row label="Fixed Expenses" value={`-₹${parseFloat(fixedExpenses) || 0}`} color={COLORS.warning} />
-                  <Row label="Savings Goal" value={`-₹${parseFloat(savingsGoal) || 0}`} color={COLORS.accentBlue} />
+                  <Row label="Savings Goal" value={`-₹${parseFloat(savingsGoal) || 0}`} color={COLORS.accent} />
                   <View style={styles.divider} />
                   <Row
                     label="Spendable Budget"
                     value={`₹${Math.max(0, (parseFloat(monthlyIncome) || 0) - (parseFloat(fixedExpenses) || 0) - (parseFloat(savingsGoal) || 0))}`}
-                    color={COLORS.accent}
+                    color={COLORS.text}
                     bold
                   />
                 </View>
@@ -191,10 +191,10 @@ const styles = StyleSheet.create({
   typeLabel: { color: COLORS.text, fontWeight: '700', fontSize: 15 },
   typeDesc: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
   btn: {
-    backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
+    backgroundColor: COLORS.cardDark, borderRadius: RADIUS.full,
     padding: 16, alignItems: 'center', marginTop: SPACING.lg,
   },
-  btnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
+  btnText: { color: COLORS.textLight, fontWeight: '800', fontSize: 16 },
   backBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: SPACING.md },
   backText: { color: COLORS.textSecondary, fontSize: 14 },
   inputGroup: { marginBottom: SPACING.md },

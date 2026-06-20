@@ -4,6 +4,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { PieChart } from 'react-native-chart-kit';
 import { useApp } from '../context/AppContext';
 import { COLORS, SPACING, RADIUS, CATEGORIES } from '../utils/theme';
@@ -49,114 +50,121 @@ export default function ExpenseTrackerScreen({ navigation }) {
           style={styles.addBtn}
           onPress={() => navigation.navigate('AddExpense')}
         >
-          <Ionicons name="add" size={20} color="#000" />
+          <Ionicons name="add" size={20} color={COLORS.textLight} />
           <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Total Card */}
-        <View style={styles.totalCard}>
-          <Text style={styles.totalLabel}>Total Spent This Month</Text>
-          <Text style={styles.totalAmount}>{formatCurrency(totalSpent)}</Text>
-          <Text style={styles.totalSub}>{monthExpenses.length} transactions</Text>
-        </View>
-
-        {/* Pie Chart */}
-        {pieData.length > 0 ? (
-          <View style={styles.chartCard}>
-            <Text style={styles.sectionTitle}>Spending Breakdown</Text>
-            <PieChart
-              data={pieData}
-              width={width - 32}
-              height={180}
-              chartConfig={{
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                backgroundColor: 'transparent',
-              }}
-              accessor="amount"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              absolute={false}
-            />
-          </View>
-        ) : (
-          <View style={styles.emptyChart}>
-            <Text style={styles.emptyIcon}>📊</Text>
-            <Text style={styles.emptyText}>Add expenses to see breakdown</Text>
-          </View>
-        )}
-
-        {/* Category Filter */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
-          <TouchableOpacity
-            style={[styles.filterChip, filter === 'all' && styles.filterChipActive]}
-            onPress={() => setFilter('all')}
+        <View style={styles.content}>
+          {/* Total Card */}
+          <LinearGradient
+            colors={['#FEDAD7', '#FADEDC']}
+            style={styles.totalCard}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>All</Text>
-          </TouchableOpacity>
-          {CATEGORIES.filter(c => byCategory[c.id] > 0).map(cat => (
-            <TouchableOpacity
-              key={cat.id}
-              style={[styles.filterChip, filter === cat.id && { borderColor: cat.color, backgroundColor: cat.color + '22' }]}
-              onPress={() => setFilter(cat.id)}
-            >
-              <Text style={{ fontSize: 12 }}>{cat.icon}</Text>
-              <Text style={[styles.filterText, filter === cat.id && { color: cat.color }]}>
-                {cat.label.split(' ')[0]}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+            <Text style={styles.totalLabel}>Total Spent This Month</Text>
+            <Text style={styles.totalAmount}>{formatCurrency(totalSpent)}</Text>
+            <Text style={styles.totalSub}>{monthExpenses.length} transactions</Text>
+          </LinearGradient>
 
-        {/* Category Summary */}
-        <View style={styles.catSummary}>
-          {CATEGORIES.filter(c => byCategory[c.id] > 0).map(cat => (
-            <View key={cat.id} style={styles.catRow}>
-              <View style={[styles.catDot, { backgroundColor: cat.color }]} />
-              <Text style={styles.catName}>{cat.label}</Text>
-              <View style={styles.catBar}>
-                <View style={[styles.catBarFill, {
-                  width: `${(byCategory[cat.id] / totalSpent) * 100}%`,
-                  backgroundColor: cat.color,
-                }]} />
-              </View>
-              <Text style={[styles.catAmt, { color: cat.color }]}>
-                {formatCurrency(byCategory[cat.id], true)}
-              </Text>
+          {/* Pie Chart */}
+          {pieData.length > 0 ? (
+            <View style={styles.chartCard}>
+              <Text style={styles.sectionTitle}>Spending Breakdown</Text>
+              <PieChart
+                data={pieData}
+                width={width - 32}
+                height={180}
+                chartConfig={{
+                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  backgroundColor: 'transparent',
+                }}
+                accessor="amount"
+                backgroundColor="transparent"
+                paddingLeft="15"
+                absolute={false}
+              />
             </View>
-          ))}
-        </View>
+          ) : (
+            <View style={styles.emptyChart}>
+              <Text style={styles.emptyIcon}>📊</Text>
+              <Text style={styles.emptyText}>Add expenses to see breakdown</Text>
+            </View>
+          )}
 
-        {/* Transactions List */}
-        <Text style={styles.sectionTitle}>Transactions</Text>
-        {filtered.length === 0 ? (
-          <View style={styles.emptyTx}>
-            <Text style={styles.emptyText}>No expenses in this category</Text>
-          </View>
-        ) : (
-          filtered.map(exp => {
-            const cat = CATEGORIES.find(c => c.id === exp.category) || CATEGORIES[7];
-            return (
-              <View key={exp.id} style={styles.txRow}>
-                <View style={[styles.txIcon, { backgroundColor: cat.color + '22' }]}>
-                  <Text style={{ fontSize: 18 }}>{cat.icon}</Text>
+          {/* Category Filter */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+            <TouchableOpacity
+              style={[styles.filterChip, filter === 'all' && styles.filterChipActive]}
+              onPress={() => setFilter('all')}
+            >
+              <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>All</Text>
+            </TouchableOpacity>
+            {CATEGORIES.filter(c => byCategory[c.id] > 0).map(cat => (
+              <TouchableOpacity
+                key={cat.id}
+                style={[styles.filterChip, filter === cat.id && { borderColor: cat.color, backgroundColor: cat.color + '22' }]}
+                onPress={() => setFilter(cat.id)}
+              >
+                <Text style={{ fontSize: 12 }}>{cat.icon}</Text>
+                <Text style={[styles.filterText, filter === cat.id && { color: cat.color }]}>
+                  {cat.label.split(' ')[0]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Category Summary */}
+          <View style={styles.catSummary}>
+            {CATEGORIES.filter(c => byCategory[c.id] > 0).map(cat => (
+              <View key={cat.id} style={styles.catRow}>
+                <View style={[styles.catDot, { backgroundColor: cat.color }]} />
+                <Text style={styles.catName}>{cat.label}</Text>
+                <View style={styles.catBar}>
+                  <View style={[styles.catBarFill, {
+                    width: `${(byCategory[cat.id] / totalSpent) * 100}%`,
+                    backgroundColor: cat.color,
+                  }]} />
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.txNote}>{exp.note || cat.label}</Text>
-                  <Text style={styles.txMeta}>
-                    {cat.label} · {new Date(exp.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                  </Text>
-                </View>
-                <Text style={styles.txAmount}>-{formatCurrency(exp.amount)}</Text>
-                <TouchableOpacity onPress={() => handleDelete(exp.id)} style={styles.deleteBtn}>
-                  <Ionicons name="trash-outline" size={16} color={COLORS.textMuted} />
-                </TouchableOpacity>
+                <Text style={[styles.catAmt, { color: cat.color }]}>
+                  {formatCurrency(byCategory[cat.id], true)}
+                </Text>
               </View>
-            );
-          })
-        )}
-        <View style={{ height: 100 }} />
+            ))}
+          </View>
+
+          {/* Transactions List */}
+          <Text style={styles.sectionTitle}>Transactions</Text>
+          {filtered.length === 0 ? (
+            <View style={styles.emptyTx}>
+              <Text style={styles.emptyText}>No expenses in this category</Text>
+            </View>
+          ) : (
+            filtered.map(exp => {
+              const cat = CATEGORIES.find(c => c.id === exp.category) || CATEGORIES[7];
+              return (
+                <View key={exp.id} style={styles.txRow}>
+                  <View style={[styles.txIcon, { backgroundColor: cat.color + '22' }]}>
+                    <Text style={{ fontSize: 18 }}>{cat.icon}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.txNote}>{exp.note || cat.label}</Text>
+                    <Text style={styles.txMeta}>
+                      {cat.label} · {new Date(exp.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </Text>
+                  </View>
+                  <Text style={styles.txAmount}>-{formatCurrency(exp.amount)}</Text>
+                  <TouchableOpacity onPress={() => handleDelete(exp.id)} style={styles.deleteBtn}>
+                    <Ionicons name="trash-outline" size={16} color={COLORS.textMuted} />
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          )}
+          <View style={{ height: 120 }} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -165,25 +173,46 @@ export default function ExpenseTrackerScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md,
-    borderBottomWidth: 1, borderColor: COLORS.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 56,
+    paddingBottom: SPACING.md,
+    backgroundColor: '#FDF2F0', // slight pink
+    borderBottomWidth: 1,
+    borderColor: COLORS.border,
+    position: 'relative',
   },
-  headerTitle: { color: COLORS.text, fontSize: 22, fontWeight: '800' },
+  headerTitle: { color: COLORS.text, fontSize: 18, fontWeight: '800' },
   addBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: COLORS.accent, borderRadius: RADIUS.full,
-    paddingHorizontal: 14, paddingVertical: 8,
+    position: 'absolute',
+    right: SPACING.lg,
+    top: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: COLORS.cardDark,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  addBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
+  addBtnText: { color: COLORS.textLight, fontWeight: '700', fontSize: 14 },
+  content: {
+    paddingVertical: SPACING.md,
+    backgroundColor: COLORS.surfaceElevated,
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
+    flex: 1,
+    minHeight: 600,
+  },
   totalCard: {
-    margin: SPACING.md, backgroundColor: COLORS.surface,
+    margin: SPACING.md,
     borderRadius: RADIUS.lg, padding: SPACING.lg,
     borderWidth: 1, borderColor: COLORS.border, alignItems: 'center',
   },
   totalLabel: { color: COLORS.textSecondary, fontSize: 13, marginBottom: 6 },
   totalAmount: { color: COLORS.text, fontSize: 36, fontWeight: '800', letterSpacing: -1 },
-  totalSub: { color: COLORS.textMuted, fontSize: 12, marginTop: 4 },
+  totalSub: { color: COLORS.textSecondary, fontSize: 12, marginTop: 4 },
   chartCard: {
     marginHorizontal: SPACING.md, backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg, padding: SPACING.md,
@@ -202,7 +231,7 @@ const styles = StyleSheet.create({
   },
   filterChipActive: { borderColor: COLORS.accent, backgroundColor: COLORS.accentSoft },
   filterText: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '600' },
-  filterTextActive: { color: COLORS.accent },
+  filterTextActive: { color: COLORS.text },
   catSummary: {
     marginHorizontal: SPACING.md, marginBottom: SPACING.md,
     backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,
@@ -222,7 +251,7 @@ const styles = StyleSheet.create({
   txIcon: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   txNote: { color: COLORS.text, fontWeight: '600', fontSize: 14 },
   txMeta: { color: COLORS.textMuted, fontSize: 12, marginTop: 2 },
-  txAmount: { color: COLORS.warning, fontWeight: '700', fontSize: 14 },
+  txAmount: { color: COLORS.danger, fontWeight: '700', fontSize: 14 },
   deleteBtn: { padding: 4 },
   emptyTx: { alignItems: 'center', padding: SPACING.xl },
 });

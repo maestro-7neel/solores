@@ -100,31 +100,35 @@ export default function AICopilotScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerCenter}>
+          <Text style={styles.brand}>solores</Text>
+          <Text style={styles.brandSub}>AI finance copilot</Text>
+        </View>
+        <View style={styles.levelBadge}>
+          <Text style={styles.levelText}>71 LEVEL</Text>
+        </View>
+      </View>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
         keyboardVerticalOffset={90}
       >
         <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-          <View style={styles.heroShellSpacer} />
           <View style={styles.heroShell}>
-            <View style={styles.heroTop}>
-              <View>
-                <Text style={styles.brand}>solores</Text>
-                <Text style={styles.brandSub}>AI finance copilot</Text>
-              </View>
-              <View style={styles.levelBadge}>
-                <Text style={styles.levelText}>71 LEVEL</Text>
-              </View>
-            </View>
-
-            <LinearGradient colors={["#081822", "#06121A"]} style={styles.mobileCard}>
+            <LinearGradient
+              colors={['#FEDAD7', '#FADEDC']}
+              style={styles.mobileCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
               <View style={styles.cardTopRow}>
                 <View style={styles.cardBadge}>
                   <Text style={styles.cardBadgeText}>solores</Text>
                 </View>
-                <View style={styles.cardIconWrap}>
-                  <Ionicons name="sparkles" size={22} color="#041825" />
+                <View style={[styles.cardIconWrap, { backgroundColor: COLORS.cardDark }]}>
+                  <Ionicons name="sparkles" size={22} color={COLORS.accent} />
                 </View>
               </View>
 
@@ -147,107 +151,104 @@ export default function AICopilotScreen() {
             </LinearGradient>
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Quick Actions</Text>
-            {QUICK_QUESTIONS.map((q, index) => (
-              <TouchableOpacity
-                key={q}
-                style={[styles.listItem, index === 0 && styles.firstListItem]}
-                onPress={() => {
-                  setQuestion(q);
-                  handleAsk(q);
-                }}
-              >
-                <Text style={styles.listItemText}>{q}</Text>
-                <Ionicons name="chevron-forward" size={18} color={COLORS.accentBlue} />
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={[styles.card, styles.askCard]}>
-            <Text style={styles.cardTitle}>💬 Ask Your Copilot</Text>
-            <View style={styles.amountRow}>
-              <Text style={styles.rupee}>₹</Text>
-              <TextInput
-                style={styles.amountInput}
-                value={spendingAmount}
-                onChangeText={setSpendingAmount}
-                placeholder="Amount"
-                placeholderTextColor={COLORS.textMuted}
-                keyboardType="numeric"
-              />
-            </View>
-            <TextInput
-              style={styles.questionInput}
-              value={question}
-              onChangeText={setQuestion}
-              placeholder="Ask anything about your finances..."
-              placeholderTextColor={COLORS.textMuted}
-              multiline
-              maxLength={200}
-            />
-            <TouchableOpacity
-              style={[styles.askBtn, loading && { opacity: 0.7 }]}
-              onPress={() => handleAsk()}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color={COLORS.accent} size="small" />
-              ) : (
-                <>
-                  <Ionicons name="sparkles" size={18} color="#fff" />
-                  <Text style={styles.askBtnText}>Get AI Advice</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {aiResponse && (
-            <View style={[styles.responseCard, { borderColor: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color + '44' }]}> 
-              <LinearGradient
-                colors={[(decisionConfig[aiResponse.decision] || decisionConfig.caution).bg, COLORS.surface]}
-                style={styles.responseHeader}
-              >
-                <Text style={styles.decisionIcon}>{(decisionConfig[aiResponse.decision] || decisionConfig.caution).icon}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.decisionLabel, { color: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color }]}> 
-                    {(decisionConfig[aiResponse.decision] || decisionConfig.caution).label}
-                  </Text>
-                  <Text style={styles.explanation}>{aiResponse.explanation}</Text>
-                </View>
-              </LinearGradient>
-              <View style={styles.responseBody}>
-                <ResponseSection icon="💡" title="Strategy" text={aiResponse.strategy} />
-                <ResponseSection icon="📋" title="Adjustment Plan" text={aiResponse.adjustment_plan} />
-                {aiResponse.health_tip && (
-                  <ResponseSection icon="🧠" title="Behavioral Insight" text={aiResponse.health_tip} />
-                )}
-              </View>
-            </View>
-          )}
-
-          {history.length > 0 && (
+          <View style={styles.content}>
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>Recent Queries</Text>
-              {history.map((item, index) => {
-                const config = decisionConfig[item.response.decision] || decisionConfig.caution;
-                return (
-                  <View key={index} style={styles.histRow}>
-                    <Text style={styles.histIcon}>{config.icon}</Text>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.histQ}>{item.question}</Text>
-                      <Text style={[styles.histD, { color: config.color }]}>{config.label}</Text>
-                    </View>
-                    <Text style={styles.histTime}>
-                      {item.time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                    </Text>
-                  </View>
-                );
-              })}
+              <Text style={styles.cardTitle}>Quick Actions</Text>
+              {QUICK_QUESTIONS.map((q, index) => (
+                <TouchableOpacity
+                  key={q}
+                  style={[styles.listItem, index === 0 && styles.firstListItem]}
+                  onPress={() => {
+                    setQuestion(q);
+                    handleAsk(q);
+                  }}
+                >
+                  <Text style={styles.listItemText}>{q}</Text>
+                  <Ionicons name="chevron-forward" size={18} color={COLORS.accent} />
+                </TouchableOpacity>
+              ))}
             </View>
-          )}
 
-          <View style={{ height: 100 }} />
+            <View style={[styles.card, styles.askCard]}>
+              <Text style={styles.cardTitle}>💬 Ask Your Copilot</Text>
+              <View style={styles.amountRow}>
+                <Text style={styles.rupee}>₹</Text>
+                <TextInput
+                  style={styles.amountInput}
+                  value={spendingAmount}
+                  onChangeText={setSpendingAmount}
+                  placeholder="Amount"
+                  placeholderTextColor={COLORS.textMuted}
+                  keyboardType="numeric"
+                />
+              </View>
+              <TextInput
+                style={styles.questionInput}
+                value={question}
+                onChangeText={setQuestion}
+                placeholder="Ask anything about your finances..."
+                placeholderTextColor={COLORS.textMuted}
+                multiline
+                maxLength={200}
+              />
+              <TouchableOpacity
+                style={[styles.askBtn, loading && { opacity: 0.7 }]}
+                onPress={() => handleAsk()}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFFFFF" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="sparkles" size={18} color={COLORS.accent} />
+                    <Text style={styles.askBtnText}>Get AI Advice</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {aiResponse && (
+              <View style={[styles.responseCard, { borderColor: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color + '44' }]}> 
+                <View style={styles.responseHeader}>
+                  <Text style={styles.decisionIcon}>{(decisionConfig[aiResponse.decision] || decisionConfig.caution).icon}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.decisionLabel, { color: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color }]}> 
+                      {(decisionConfig[aiResponse.decision] || decisionConfig.caution).label}
+                    </Text>
+                    <Text style={styles.explanation}>{aiResponse.explanation}</Text>
+                  </View>
+                </View>
+                <View style={styles.responseBody}>
+                  <ResponseSection icon="💡" title="Strategy" text={aiResponse.strategy} />
+                  <ResponseSection icon="📋" title="Adjustment Plan" text={aiResponse.adjustment_plan} />
+                  {aiResponse.health_tip && (
+                    <ResponseSection icon="🧠" title="Behavioral Insight" text={aiResponse.health_tip} />
+                  )}
+                </View>
+              </View>
+            )}
+
+            {history.length > 0 && (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Recent Queries</Text>
+                {history.map((item, index) => {
+                  const config = decisionConfig[item.response.decision] || decisionConfig.caution;
+                  return (
+                    <View key={index} style={styles.histRow}>
+                      <Text style={styles.histIcon}>{config.icon}</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.histQ}>{item.question}</Text>
+                        <Text style={[styles.histD, { color: config.color }]}>{config.label}</Text>
+                      </View>
+                      <Text style={styles.histTime}>
+                        {item.time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -266,48 +267,70 @@ function ResponseSection({ icon, title, text }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   wrapper: { flex: 1 },
-  heroShell: { paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md },
-  heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.md },
-  brand: { color: COLORS.text, fontSize: 22, fontWeight: '900', letterSpacing: 0.5 },
-  brandSub: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
-  levelBadge: { backgroundColor: '#07101A', borderWidth: 1, borderColor: '#14213A', paddingVertical: 6, paddingHorizontal: 12, borderRadius: RADIUS.full },
-  levelText: { color: COLORS.accentBlue, fontSize: 12, fontWeight: '700' },
-  balanceCard: { backgroundColor: COLORS.surface, borderRadius: RADIUS.xl, padding: SPACING.lg, borderWidth: 1, borderColor: '#14213A' },
-  balanceLabel: { color: COLORS.textSecondary, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
-  balanceAmount: { color: COLORS.text, fontSize: 36, fontWeight: '900', marginBottom: 6 },
-  balanceSub: { color: COLORS.textSecondary, fontSize: 13, marginBottom: SPACING.md },
-  metricsRow: { flexDirection: 'row', justifyContent: 'space-between', gap: SPACING.sm },
-  metricTile: { flex: 1, backgroundColor: '#07101A', borderRadius: RADIUS.md, padding: SPACING.sm, borderWidth: 1, borderColor: '#14213A' },
-  metricLabel: { color: COLORS.textSecondary, fontSize: 10, textTransform: 'uppercase', marginBottom: 6 },
-  metricValue: { color: COLORS.text, fontSize: 14, fontWeight: '800' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 56,
+    paddingBottom: SPACING.md,
+    backgroundColor: '#FDF2F0', // slight pink
+    borderBottomWidth: 1,
+    borderColor: COLORS.border,
+    position: 'relative',
+  },
+  headerCenter: {
+    alignItems: 'center',
+  },
+  brand: { color: COLORS.text, fontSize: 18, fontWeight: '900', letterSpacing: 0.5 },
+  brandSub: { color: COLORS.textSecondary, fontSize: 10, marginTop: 1 },
+  levelBadge: {
+    position: 'absolute',
+    right: SPACING.lg,
+    top: 50,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.full,
+  },
+  levelText: { color: COLORS.accent, fontSize: 12, fontWeight: '700' },
+  heroShell: { paddingHorizontal: SPACING.lg, paddingTop: SPACING.md, paddingBottom: SPACING.xs },
+  content: {
+    padding: SPACING.md,
+    backgroundColor: COLORS.surfaceElevated,
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
+    flex: 1,
+    minHeight: 650,
+  },
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
     padding: SPACING.md,
-    marginHorizontal: SPACING.md,
     marginBottom: SPACING.md,
     borderWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.border,
   },
   askCard: { paddingBottom: SPACING.lg },
   cardTitle: { color: COLORS.text, fontWeight: '700', fontSize: 15, marginBottom: SPACING.md },
   amountRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#07101A',
+    backgroundColor: COLORS.surfaceElevated,
     borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.border,
     paddingHorizontal: 14,
     marginBottom: SPACING.sm,
   },
-  rupee: { color: COLORS.accent, fontSize: 22, fontWeight: '700', marginRight: 6 },
+  rupee: { color: COLORS.text, fontSize: 22, fontWeight: '700', marginRight: 6 },
   amountInput: { flex: 1, color: COLORS.text, fontSize: 20, paddingVertical: 12, fontWeight: '700' },
   questionInput: {
-    backgroundColor: '#07101A',
+    backgroundColor: COLORS.surfaceElevated,
     borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.border,
     padding: 12,
     color: COLORS.text,
     fontSize: 14,
@@ -320,17 +343,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.sm,
-    backgroundColor: '#07101A',
-    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
     marginBottom: SPACING.sm,
     borderWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.border,
   },
   firstListItem: { marginTop: 0 },
   listItemText: { color: COLORS.text, fontSize: 14, fontWeight: '700' },
   askBtn: {
-    backgroundColor: COLORS.accent,
+    backgroundColor: COLORS.cardDark,
     borderRadius: RADIUS.full,
     padding: 14,
     alignItems: 'center',
@@ -339,40 +362,37 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   mobileCard: {
-    backgroundColor: '#06121A',
     borderRadius: 20,
     padding: SPACING.lg,
-    marginBottom: SPACING.md,
-    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
     borderWidth: 1,
-    borderColor: '#122433',
-    shadowColor: '#000',
+    borderColor: COLORS.border,
+    shadowColor: '#1E1214',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 6,
   },
   cardTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardBadge: { backgroundColor: '#072033', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 14, borderWidth: 1, borderColor: '#0E3A56' },
-  cardBadgeText: { color: COLORS.accentBlue, fontWeight: '900', fontSize: 12, letterSpacing: 0.6 },
-  cardIconWrap: { backgroundColor: COLORS.accentBlue, padding: 8, borderRadius: 14, shadowColor: COLORS.accentBlue, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.25, shadowRadius: 10 },
+  cardBadge: { backgroundColor: COLORS.surface, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 14, borderWidth: 1, borderColor: COLORS.border },
+  cardBadgeText: { color: COLORS.accent, fontWeight: '900', fontSize: 12, letterSpacing: 0.6 },
+  cardIconWrap: { padding: 8, borderRadius: 14, shadowColor: COLORS.accent, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.25, shadowRadius: 10 },
   cardMain: { alignItems: 'flex-start', marginTop: SPACING.md },
   cardLabel: { color: COLORS.textSecondary, fontSize: 11, textTransform: 'uppercase', marginBottom: 6, letterSpacing: 0.6 },
   cardAmount: { color: COLORS.text, fontSize: 44, fontWeight: '900' },
   cardSub: { color: COLORS.textSecondary, fontSize: 13, marginTop: 8, opacity: 0.9 },
   cardMetricsRow: { flexDirection: 'row', marginTop: SPACING.md, gap: SPACING.sm },
-  metricPill: { backgroundColor: '#072533', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 14, marginRight: SPACING.sm, borderWidth: 0, },
+  metricPill: { backgroundColor: COLORS.surface, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 14, marginRight: SPACING.sm, borderWidth: 1, borderColor: COLORS.border },
   pillLabel: { color: COLORS.textSecondary, fontSize: 10, textTransform: 'uppercase' },
   pillValue: { color: COLORS.text, fontSize: 14, fontWeight: '900' },
-  heroShellSpacer: { height: SPACING.lg },
-  askBtnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 15 },
+  heroShellSpacer: { height: SPACING.sm },
+  askBtnText: { color: COLORS.textLight, fontWeight: '800', fontSize: 15 },
   responseCard: {
-    backgroundColor: '#0C1521',
+    backgroundColor: COLORS.cardDark,
     borderRadius: RADIUS.lg,
-    marginHorizontal: SPACING.md,
     marginBottom: SPACING.md,
     borderWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.borderDark,
     overflow: 'hidden',
   },
   responseHeader: {
@@ -380,22 +400,22 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: SPACING.md,
     alignItems: 'flex-start',
-    backgroundColor: '#07101A',
+    backgroundColor: COLORS.cardDark,
   },
   decisionIcon: { fontSize: 28 },
   decisionLabel: { fontWeight: '800', fontSize: 16, marginBottom: 4 },
-  explanation: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 20 },
+  explanation: { color: COLORS.textSecondaryLight, fontSize: 13, lineHeight: 20 },
   responseBody: { padding: SPACING.md },
   section: { marginBottom: SPACING.md },
-  sectionTitle: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
-  sectionText: { color: COLORS.text, fontSize: 13, lineHeight: 20 },
+  sectionTitle: { color: COLORS.textSecondaryLight, fontSize: 12, fontWeight: '700', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionText: { color: COLORS.textLight, fontSize: 13, lineHeight: 20 },
   histRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderTopWidth: 1,
-    borderColor: '#14213A',
+    borderColor: COLORS.border,
   },
   histIcon: { fontSize: 16 },
   histQ: { color: COLORS.text, fontSize: 13 },
