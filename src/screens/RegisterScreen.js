@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
-import { COLORS, SPACING, RADIUS } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
 // Password strength checker
 const getPasswordStrength = (password) => {
@@ -241,8 +241,8 @@ export default function RegisterScreen({ navigation }) {
                   size={18}
                   color={
                     passwordsMismatch ? COLORS.danger :
-                    passwordsMatch ? COLORS.success :
-                    focusedField === 'confirm' ? COLORS.accent : COLORS.textMuted
+                      passwordsMatch ? COLORS.success :
+                        focusedField === 'confirm' ? COLORS.accent : COLORS.textMuted
                   }
                   style={styles.inputIcon}
                 />
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: {
     flexGrow: 1, padding: SPACING.lg,
-    paddingTop: 56, paddingBottom: 40,
+    paddingTop: STATUS_BAR_HEIGHT + 8, paddingBottom: 40,
   },
   backBtn: {
     flexDirection: 'row', alignItems: 'center',

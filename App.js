@@ -22,7 +22,7 @@ import DashboardScreen from './src/screens/DashboardScreen';
 import ExpenseTrackerScreen from './src/screens/ExpenseTrackerScreen';
 import CalendarScreen from './src/screens/CalendarScreen';
 import AICopilotScreen from './src/screens/AICopilotScreen';
-import HealthScoreScreen from './src/screens/HealthScoreScreen';
+import AccountScreen from './src/screens/AccountScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
 
 // Services
@@ -69,8 +69,8 @@ function MainTabs() {
             Dashboard: focused ? 'home' : 'home-outline',
             Tracker: focused ? 'wallet' : 'wallet-outline',
             Calendar: focused ? 'calendar' : 'calendar-outline',
-            'solores': focused ? 'sparkles' : 'sparkles-outline',
-            Health: focused ? 'heart' : 'heart-outline',
+            'Solores': focused ? 'sparkles' : 'sparkles-outline',
+            Account: focused ? 'person' : 'person-outline',
           };
           return <Ionicons name={icons[route.name]} size={20} color={color} />;
         },
@@ -79,8 +79,8 @@ function MainTabs() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Tracker" component={ExpenseTrackerScreen} />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
-      <Tab.Screen name="solores" component={AICopilotScreen} />
-      <Tab.Screen name="Health" component={HealthScoreScreen} />
+      <Tab.Screen name="Solores" component={AICopilotScreen} />
+      <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
   );
 }

@@ -5,7 +5,7 @@ A production-ready Gen-AI powered personal finance management app built with Rea
 ## 🏗️ Folder Structure
 
 ```
-solores/
+Solores/
 ├── App.js                          # Root navigation + auth gate
 ├── app.json                        # Expo config
 ├── babel.config.js
@@ -40,7 +40,7 @@ solores/
 
 ```bash
 # 1. Clone / extract the project
-cd solores
+cd Solores
 
 # 2. Install dependencies
 npm install
@@ -93,7 +93,7 @@ Without an API key, the app uses intelligent mock responses that demonstrate all
 - Tap any day to see detailed spending
 - Per-day budget vs. spent comparison
 
-### solores (Mode 2)
+### Solores (Mode 2)
 - Remaining budget + safe daily limit display
 - Ask "Can I spend ₹X?" with any context
 - Quick question shortcuts

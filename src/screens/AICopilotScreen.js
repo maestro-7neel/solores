@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import { COLORS, SPACING, RADIUS } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 import { queryAI } from '../services/AIService';
 import {
   formatCurrency,
@@ -90,7 +90,7 @@ export default function AICopilotScreen() {
 
   if (appMode === 'simple') {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: SPACING.xl }]}> 
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: SPACING.xl }]}>
         <Text style={{ fontSize: 48, marginBottom: 16 }}>🤖</Text>
         <Text style={styles.lockedTitle}>AI Mode Required</Text>
         <Text style={styles.lockedSub}>Switch to AI Mode from Dashboard to access your Financial Copilot</Text>
@@ -102,11 +102,8 @@ export default function AICopilotScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerCenter}>
-          <Text style={styles.brand}>solores</Text>
-          <Text style={styles.brandSub}>AI finance copilot</Text>
-        </View>
-        <View style={styles.levelBadge}>
-          <Text style={styles.levelText}>71 LEVEL</Text>
+          <Text style={styles.brand}>Solores</Text>
+          <Text style={styles.brandSub}>Financial Assistant</Text>
         </View>
       </View>
 
@@ -125,7 +122,7 @@ export default function AICopilotScreen() {
             >
               <View style={styles.cardTopRow}>
                 <View style={styles.cardBadge}>
-                  <Text style={styles.cardBadgeText}>solores</Text>
+                  <Text style={styles.cardBadgeText}>Solores</Text>
                 </View>
                 <View style={[styles.cardIconWrap, { backgroundColor: COLORS.cardDark }]}>
                   <Ionicons name="sparkles" size={22} color={COLORS.accent} />
@@ -208,11 +205,11 @@ export default function AICopilotScreen() {
             </View>
 
             {aiResponse && (
-              <View style={[styles.responseCard, { borderColor: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color + '44' }]}> 
+              <View style={[styles.responseCard, { borderColor: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color + '44' }]}>
                 <View style={styles.responseHeader}>
                   <Text style={styles.decisionIcon}>{(decisionConfig[aiResponse.decision] || decisionConfig.caution).icon}</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.decisionLabel, { color: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color }]}> 
+                    <Text style={[styles.decisionLabel, { color: (decisionConfig[aiResponse.decision] || decisionConfig.caution).color }]}>
                       {(decisionConfig[aiResponse.decision] || decisionConfig.caution).label}
                     </Text>
                     <Text style={styles.explanation}>{aiResponse.explanation}</Text>
@@ -271,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 56,
+    paddingTop: STATUS_BAR_HEIGHT + 8,
     paddingBottom: SPACING.md,
     backgroundColor: '#FDF2F0', // slight pink
     borderBottomWidth: 1,

@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 import {
-  COLORS, SPACING, RADIUS, SHADOWS, CATEGORIES,
+  COLORS, SPACING, RADIUS, SHADOWS, CATEGORIES, STATUS_BAR_HEIGHT,
 } from '../utils/theme';
 import {
   formatCurrency, calcAvailableBudget, calcSafeDailyLimit,
@@ -118,12 +118,12 @@ export default function DashboardScreen({ navigation }) {
           {appMode === 'ai' && (
             <TouchableOpacity
               style={[styles.aiBanner, SHADOWS.glow]}
-              onPress={() => navigation.navigate('solores')}
+              onPress={() => navigation.navigate('Solores')}
             >
               <View style={styles.aiBannerInner}>
                 <Text style={styles.aiBannerIcon}>🤖</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.aiBannerTitle}>solores Active</Text>
+                  <Text style={styles.aiBannerTitle}>Solores Active</Text>
                   <Text style={styles.aiBannerSub}>Ask "Can I spend ₹500?" →</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={COLORS.accent} />
@@ -235,7 +235,7 @@ const getProfileLabel = (type) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  header: { paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.lg },
+  header: { paddingTop: STATUS_BAR_HEIGHT + 8, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.lg },
   headerTop: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'relative', height: 48, marginBottom: 6 },
   modeToggleLeft: { flexDirection: 'row', alignItems: 'center', gap: 4, position: 'absolute', left: 0 },
   headerCenter: { alignItems: 'center' },

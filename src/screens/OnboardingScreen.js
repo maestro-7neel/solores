@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, RADIUS, USER_TYPES } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, USER_TYPES, STATUS_BAR_HEIGHT } from '../utils/theme';
 import { useApp } from '../context/AppContext';
 
 export default function OnboardingScreen({ navigation }) {
@@ -167,7 +167,7 @@ function Row({ label, value, color, bold }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { padding: SPACING.lg, paddingTop: 60, paddingBottom: 40 },
+  scroll: { padding: SPACING.lg, paddingTop: STATUS_BAR_HEIGHT + 16, paddingBottom: 40 },
   header: { alignItems: 'center', marginBottom: SPACING.xl },
   logoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   logoIcon: { fontSize: 32 },

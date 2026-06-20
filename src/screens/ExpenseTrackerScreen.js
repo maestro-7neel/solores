@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PieChart } from 'react-native-chart-kit';
 import { useApp } from '../context/AppContext';
-import { COLORS, SPACING, RADIUS, CATEGORIES } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, CATEGORIES, STATUS_BAR_HEIGHT, SHADOWS } from '../utils/theme';
 import { formatCurrency, groupByCategory } from '../utils/financialUtils';
 
 const { width } = Dimensions.get('window');
@@ -46,13 +46,6 @@ export default function ExpenseTrackerScreen({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Expense Tracker</Text>
-        <TouchableOpacity
-          style={styles.addBtn}
-          onPress={() => navigation.navigate('AddExpense')}
-        >
-          <Ionicons name="add" size={20} color={COLORS.textLight} />
-          <Text style={styles.addBtnText}>Add</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -91,6 +84,12 @@ export default function ExpenseTrackerScreen({ navigation }) {
             <View style={styles.emptyChart}>
               <Text style={styles.emptyIcon}>📊</Text>
               <Text style={styles.emptyText}>Add expenses to see breakdown</Text>
+              <TouchableOpacity
+                style={styles.emptyAddBtn}
+                onPress={() => navigation.navigate('AddExpense')}
+              >
+                <Text style={styles.emptyAddBtnText}>+ Add Expense</Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -166,6 +165,16 @@ export default function ExpenseTrackerScreen({ navigation }) {
           <View style={{ height: 120 }} />
         </View>
       </ScrollView>
+
+      {/* Add Expense FAB */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('AddExpense')}
+      >
+        <View style={styles.fabInner}>
+          <Ionicons name="add" size={28} color="#FFFFFF" />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -176,27 +185,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 56,
+    paddingTop: STATUS_BAR_HEIGHT + 8,
     paddingBottom: SPACING.md,
     backgroundColor: '#FDF2F0', // slight pink
     borderBottomWidth: 1,
     borderColor: COLORS.border,
-    position: 'relative',
   },
   headerTitle: { color: COLORS.text, fontSize: 18, fontWeight: '800' },
-  addBtn: {
-    position: 'absolute',
-    right: SPACING.lg,
-    top: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+  emptyAddBtn: {
     backgroundColor: COLORS.cardDark,
     borderRadius: RADIUS.full,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: SPACING.md,
+    shadowColor: '#1E1214',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  addBtnText: { color: COLORS.textLight, fontWeight: '700', fontSize: 14 },
+  emptyAddBtnText: { color: COLORS.textLight, fontWeight: '800', fontSize: 14 },
+  fab: { position: 'absolute', bottom: 100, right: SPACING.md, borderRadius: RADIUS.full, ...SHADOWS.glow },
+  fabInner: { width: 56, height: 56, borderRadius: RADIUS.full, backgroundColor: COLORS.accent, justifyContent: 'center', alignItems: 'center' },
   content: {
     paddingVertical: SPACING.md,
     backgroundColor: COLORS.surfaceElevated,

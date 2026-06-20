@@ -6,7 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import { COLORS, SPACING, RADIUS, CATEGORIES } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, CATEGORIES, STATUS_BAR_HEIGHT } from '../utils/theme';
 import {
   formatCurrency, groupByDate, getDayStatus,
 } from '../utils/financialUtils';
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 56,
+    paddingTop: STATUS_BAR_HEIGHT + 8,
     paddingBottom: SPACING.md,
     backgroundColor: '#FDF2F0', // slight pink
     borderBottomWidth: 1,

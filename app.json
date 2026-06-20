@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Solores",
-    "slug": "solores",
+    "slug": "Solores",
     "version": "54.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,16 +9,18 @@
     "splash": {
       "backgroundColor": "#0A0E1A"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.solores"
+      "bundleIdentifier": "com.yourname.Solores"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#0A0E1A"
       },
-      "package": "com.yourname.solores"
+      "package": "com.yourname.Solores"
     },
     "web": {
       "bundler": "metro"

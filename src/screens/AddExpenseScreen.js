@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import { COLORS, SPACING, RADIUS, CATEGORIES } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, CATEGORIES, STATUS_BAR_HEIGHT } from '../utils/theme';
 
 export default function AddExpenseScreen({ navigation }) {
   const { addExpense } = useApp();
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surfaceElevated },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingTop: 56, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md,
+    paddingTop: STATUS_BAR_HEIGHT + 8, paddingHorizontal: SPACING.lg, paddingBottom: SPACING.md,
     borderBottomWidth: 1, borderColor: COLORS.border, backgroundColor: COLORS.surfaceElevated,
   },
   headerTitle: { color: COLORS.text, fontSize: 17, fontWeight: '700' },

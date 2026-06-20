@@ -1,5 +1,18 @@
-// src/utils/theme.js - Design system for Solores
-// Modern minimal aesthetic: Dark teal background with white card-based UI and purple accents
+import { Dimensions, Platform, StatusBar } from 'react-native';
+
+export const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// Guideline base dimensions (based on standard mobile screen)
+const guidelineBaseWidth = 375;
+
+export const scale = (size) => (SCREEN_WIDTH / guidelineBaseWidth) * size;
+export const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
+export const scaleFont = (size) => moderateScale(size, 0.4);
+
+// Auto-adjusting Status Bar height based on screen hardware, model, and notch
+export const STATUS_BAR_HEIGHT = Platform.OS === 'ios'
+  ? (SCREEN_HEIGHT >= 812 ? 47 : 20) // Modern notched/Dynamic Island iPhone vs old home-button models
+  : (StatusBar.currentHeight || 24);
 
 export const COLORS = {
   // Base - Warm cream/beige background, white card-based sheets, rich dark rose-charcoal contrast panels
@@ -60,19 +73,19 @@ export const FONTS = {
 };
 
 export const SPACING = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48,
+  xs: moderateScale(4),
+  sm: moderateScale(8),
+  md: moderateScale(16),
+  lg: moderateScale(24),
+  xl: moderateScale(32),
+  xxl: moderateScale(48),
 };
 
 export const RADIUS = {
-  sm: 8,
-  md: 14,
-  lg: 24,
-  xl: 32,
+  sm: moderateScale(8),
+  md: moderateScale(14),
+  lg: moderateScale(24),
+  xl: moderateScale(32),
   full: 999,
 };
 

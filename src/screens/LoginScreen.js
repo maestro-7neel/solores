@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
-import { COLORS, SPACING, RADIUS } from '../utils/theme';
+import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: {
     flexGrow: 1, justifyContent: 'center',
-    padding: SPACING.lg, paddingTop: 60, paddingBottom: 40,
+    padding: SPACING.lg, paddingTop: STATUS_BAR_HEIGHT + 16, paddingBottom: 40,
   },
   logoSection: { alignItems: 'center', marginBottom: SPACING.xl },
   logoCircle: {
