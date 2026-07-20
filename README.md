@@ -2,10 +2,6 @@
 
 A production-ready Gen-AI powered personal finance management application built using React Native (Expo).
 
-## 🌐 Live Deployment
-
-[Open Solores](https://dmkhb48726al6.cloudfront.net)
-
 ---
 
 ## ☁️ AWS Cloud Deployment
