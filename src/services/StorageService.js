@@ -8,6 +8,9 @@ const KEYS = {
   EXPENSES: '@copilot_expenses',
   APP_MODE: '@copilot_app_mode',
   LOGIN_CREDENTIALS: '@copilot_login_creds',
+  BROWSER_VISITED: '@copilot_browser_visited',
+  SAVED_BROWSER_CREDS: '@copilot_saved_browser_creds',
+  TUTORIAL_COMPLETED: '@copilot_tutorial_completed',
 };
 
 export const StorageService = {
@@ -81,6 +84,45 @@ export const StorageService = {
 
   async clearLoginCredentials() {
     await AsyncStorage.removeItem(KEYS.LOGIN_CREDENTIALS);
+  },
+
+  // --- Browser First Time Detection ---
+  async isFirstTimeBrowser() {
+    const visited = await AsyncStorage.getItem(KEYS.BROWSER_VISITED);
+    return !visited;
+  },
+
+  async markBrowserVisited() {
+    await AsyncStorage.setItem(KEYS.BROWSER_VISITED, 'true');
+  },
+
+  // --- Saved Browser Credentials (Remember Me) ---
+  async saveBrowserCredentials(username, password) {
+    const creds = { username, password, savedAt: new Date().toISOString() };
+    await AsyncStorage.setItem(KEYS.SAVED_BROWSER_CREDS, JSON.stringify(creds));
+  },
+
+  async getSavedBrowserCredentials() {
+    const raw = await AsyncStorage.getItem(KEYS.SAVED_BROWSER_CREDS);
+    return raw ? JSON.parse(raw) : null;
+  },
+
+  async clearSavedBrowserCredentials() {
+    await AsyncStorage.removeItem(KEYS.SAVED_BROWSER_CREDS);
+  },
+
+  // --- Tutorial State ---
+  async hasCompletedTutorial() {
+    const done = await AsyncStorage.getItem(KEYS.TUTORIAL_COMPLETED);
+    return done === 'true';
+  },
+
+  async setTutorialCompleted(completed = true) {
+    if (completed) {
+      await AsyncStorage.setItem(KEYS.TUTORIAL_COMPLETED, 'true');
+    } else {
+      await AsyncStorage.removeItem(KEYS.TUTORIAL_COMPLETED);
+    }
   },
 };
 

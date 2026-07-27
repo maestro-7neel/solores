@@ -1,11 +1,13 @@
 // src/screens/DashboardScreen.js - Main dashboard overview
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
+import { StorageService } from '../services/StorageService';
+import TutorialModal from '../components/TutorialModal';
 import {
   COLORS, SPACING, RADIUS, SHADOWS, CATEGORIES, STATUS_BAR_HEIGHT,
 } from '../utils/theme';
@@ -16,6 +18,27 @@ import {
 
 export default function DashboardScreen({ navigation }) {
   const { profile, monthExpenses, totalSpent, appMode, setMode, logout, username } = useApp();
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    checkTutorial();
+  }, []);
+
+  const checkTutorial = async () => {
+    try {
+      const completed = await StorageService.hasCompletedTutorial();
+      if (!completed) {
+        setShowTutorial(true);
+      }
+    } catch (e) {
+      console.error('Failed to check tutorial status:', e);
+    }
+  };
+
+  const handleCloseTutorial = async () => {
+    setShowTutorial(false);
+    await StorageService.setTutorialCompleted(true);
+  };
 
   const remainingDays = getRemainingDaysInMonth();
   const availableBudget = useMemo(() => calcAvailableBudget(profile || {}, totalSpent), [profile, totalSpent]);
@@ -30,6 +53,10 @@ export default function DashboardScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TutorialModal
+        visible={showTutorial}
+        onClose={handleCloseTutorial}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <LinearGradient colors={['#FDF2F0', COLORS.background]} style={styles.header}>
@@ -50,15 +77,23 @@ export default function DashboardScreen({ navigation }) {
                 {username ? username.charAt(0).toUpperCase() + username.slice(1) : 'Friend'} 👋
               </Text>
             </View>
-            <TouchableOpacity
-              style={styles.logoutBtnRight}
-              onPress={async () => {
-                await logout();
-                navigation.replace('Login');
-              }}
-            >
-              <Ionicons name="log-out" size={20} color={COLORS.danger} />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, position: 'absolute', right: 0 }}>
+              <TouchableOpacity
+                style={styles.headerActionBtn}
+                onPress={() => setShowTutorial(true)}
+              >
+                <Ionicons name="help-circle-outline" size={22} color={COLORS.text} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.logoutBtnRight}
+                onPress={async () => {
+                  await logout();
+                  navigation.replace('Login');
+                }}
+              >
+                <Ionicons name="log-out" size={20} color={COLORS.danger} />
+              </TouchableOpacity>
+            </View>
           </View>
           <Text style={styles.monthLabelCentered}>{getCurrentMonthLabel()}</Text>
         </LinearGradient>
@@ -244,7 +279,8 @@ const styles = StyleSheet.create({
   greeting: { color: COLORS.textSecondary, fontSize: 13 },
   userName: { color: COLORS.text, fontSize: 22, fontWeight: '800' },
   modeLabel: { color: COLORS.textSecondary, fontSize: 12, fontWeight: '600' },
-  logoutBtnRight: { position: 'absolute', right: 0, padding: 6 },
+  logoutBtnRight: { padding: 4 },
+  headerActionBtn: { padding: 4 },
   monthLabelCentered: { color: COLORS.textMuted, fontSize: 12, textAlign: 'center', marginTop: 2 },
   content: {
     padding: SPACING.md,

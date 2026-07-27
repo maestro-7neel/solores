@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
+import { StorageService } from '../services/StorageService';
 import { useApp } from '../context/AppContext';
 import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
@@ -35,6 +36,7 @@ export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -82,6 +84,12 @@ export default function RegisterScreen({ navigation }) {
     try {
       const result = await AuthService.register(username, password);
       if (result.success) {
+        if (rememberMe) {
+          await StorageService.saveBrowserCredentials(username.trim().toLowerCase(), password);
+        } else {
+          await StorageService.clearSavedBrowserCredentials();
+        }
+        await StorageService.markBrowserVisited();
         await reload();
         // Go straight to onboarding after registration
         navigation.replace('Onboarding');
@@ -286,6 +294,20 @@ export default function RegisterScreen({ navigation }) {
               )}
             </View>
 
+            {/* Remember / Save Credentials Checkbox */}
+            <TouchableOpacity
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(prev => !prev)}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={rememberMe ? 'checkbox' : 'square-outline'}
+                size={20}
+                color={rememberMe ? COLORS.accent : COLORS.textMuted}
+              />
+              <Text style={styles.rememberText}>Save credentials in browser</Text>
+            </TouchableOpacity>
+
             {/* Register Button */}
             <TouchableOpacity
               style={styles.registerBtn}
@@ -389,6 +411,18 @@ const styles = StyleSheet.create({
   strengthBar: { flex: 1, height: 3, borderRadius: 2 },
   strengthLabel: { fontSize: 11, fontWeight: '700', width: 42 },
   mismatchText: { color: COLORS.danger, fontSize: 11, marginTop: 4, marginLeft: 2 },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: SPACING.md,
+    marginTop: 4,
+  },
+  rememberText: {
+    color: COLORS.textSecondary,
+    fontSize: 13,
+    fontWeight: '600',
+  },
   registerBtn: {
     borderRadius: RADIUS.full, overflow: 'hidden',
     marginTop: SPACING.sm, marginBottom: SPACING.md,

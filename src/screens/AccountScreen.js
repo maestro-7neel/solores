@@ -7,6 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp } from '../context/AppContext';
 import { AuthService } from '../services/AuthService';
+import { StorageService } from '../services/StorageService';
+import TutorialModal from '../components/TutorialModal';
 import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 import { formatCurrency } from '../utils/financialUtils';
 
@@ -14,6 +16,8 @@ export default function AccountScreen({ navigation }) {
   const { profile, monthExpenses, totalSpent, logout } = useApp();
   const [sessionUser, setSessionUser] = useState('');
   const [createdDate, setCreatedDate] = useState(null);
+  const [hasSavedCreds, setHasSavedCreds] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     loadAccountInfo();
@@ -31,9 +35,18 @@ export default function AccountScreen({ navigation }) {
           setCreatedDate(new Date(userData.createdAt));
         }
       }
+
+      const creds = await StorageService.getSavedBrowserCredentials();
+      setHasSavedCreds(!!creds);
     } catch (e) {
       console.error('Failed to load account info:', e);
     }
+  };
+
+  const handleClearSavedCreds = async () => {
+    await StorageService.clearSavedBrowserCredentials();
+    setHasSavedCreds(false);
+    Alert.alert('Browser Credentials Cleared', 'Saved login details have been removed from this browser.');
   };
 
   const handleLogout = () => {
@@ -56,9 +69,14 @@ export default function AccountScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TutorialModal
+        visible={showTutorial}
+        onClose={() => setShowTutorial(false)}
+      />
+
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Account</Text>
+        <Text style={styles.headerTitle}>Account & Security</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -81,6 +99,45 @@ export default function AccountScreen({ navigation }) {
                   })
                 : 'Loading...'}
             </Text>
+          </View>
+
+          {/* Browser Credentials & Security Section */}
+          <Text style={styles.sectionTitle}>Browser Security & Credentials</Text>
+          <View style={styles.statsCard}>
+            <View style={styles.actionRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.actionTitle}>Browser Credential Storage</Text>
+                <Text style={styles.actionDesc}>
+                  {hasSavedCreds
+                    ? 'Login credentials are currently saved on this browser'
+                    : 'No saved login credentials found on this browser'}
+                </Text>
+              </View>
+              {hasSavedCreds ? (
+                <TouchableOpacity style={styles.outlineDangerBtn} onPress={handleClearSavedCreds}>
+                  <Text style={styles.outlineDangerText}>Clear</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.badgeSuccess}>
+                  <Text style={styles.badgeSuccessText}>Clean</Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* App Tutorial & Help Section */}
+          <Text style={styles.sectionTitle}>Interactive App Tour</Text>
+          <View style={styles.statsCard}>
+            <View style={styles.actionRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.actionTitle}>App Walkthrough Tutorial</Text>
+                <Text style={styles.actionDesc}>Revisit feature tour and budgeting tips</Text>
+              </View>
+              <TouchableOpacity style={styles.actionBtn} onPress={() => setShowTutorial(true)}>
+                <Ionicons name="play-circle-outline" size={18} color={COLORS.textLight} />
+                <Text style={styles.actionBtnText}>Launch Tour</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Statistics Section */}
@@ -184,6 +241,60 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  actionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  actionDesc: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLORS.cardDark,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: RADIUS.full,
+  },
+  actionBtnText: {
+    color: COLORS.textLight,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  outlineDangerBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.danger,
+    backgroundColor: COLORS.dangerSoft,
+  },
+  outlineDangerText: {
+    color: COLORS.danger,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  badgeSuccess: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.accentSoft,
+  },
+  badgeSuccessText: {
+    color: COLORS.accent,
+    fontSize: 11,
+    fontWeight: '700',
   },
   statRow: {
     flexDirection: 'row',

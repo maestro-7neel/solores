@@ -1,7 +1,7 @@
 // src/screens/LoginScreen.js
 // Full-featured login screen matching the AI Financial Copilot dark fintech theme
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
   KeyboardAvoidingView, Platform, ScrollView,
@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../services/AuthService';
+import { StorageService } from '../services/StorageService';
 import { useApp } from '../context/AppContext';
 import { COLORS, SPACING, RADIUS, STATUS_BAR_HEIGHT } from '../utils/theme';
 
@@ -17,10 +18,33 @@ export default function LoginScreen({ navigation }) {
   const { reload } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState(null);
+  const [isFirstTimeBrowser, setIsFirstTimeBrowser] = useState(false);
+
+  // Load saved credentials & check browser status on mount
+  useEffect(() => {
+    loadSavedCreds();
+  }, []);
+
+  const loadSavedCreds = async () => {
+    try {
+      const isFirst = await StorageService.isFirstTimeBrowser();
+      setIsFirstTimeBrowser(isFirst);
+
+      const savedCreds = await StorageService.getSavedBrowserCredentials();
+      if (savedCreds) {
+        setUsername(savedCreds.username || '');
+        setPassword(savedCreds.password || '');
+        setRememberMe(true);
+      }
+    } catch (e) {
+      console.error('Failed to load saved browser credentials', e);
+    }
+  };
 
   // Shake animation for error
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -53,10 +77,16 @@ export default function LoginScreen({ navigation }) {
     try {
       const result = await AuthService.login(username, password);
       if (result.success) {
+        // Save or clear credentials in browser storage based on checkbox
+        if (rememberMe) {
+          await StorageService.saveBrowserCredentials(username.trim().toLowerCase(), password);
+        } else {
+          await StorageService.clearSavedBrowserCredentials();
+        }
+
+        await StorageService.markBrowserVisited();
         await reload();
-        // Navigate to onboarding or main app
-        // Check if profile exists — if yes go to MainTabs, else Onboarding
-        const { StorageService } = require('../services/StorageService');
+
         const profile = await StorageService.getUserProfile();
         navigation.replace(profile ? 'MainTabs' : 'Onboarding');
       } else {
@@ -93,6 +123,19 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.tagline}>Your AI Financial Copilot</Text>
           </View>
 
+          {/* First-time Browser Visitor Banner */}
+          {isFirstTimeBrowser && (
+            <View style={styles.firstTimeBanner}>
+              <Ionicons name="sparkles" size={18} color={COLORS.accent} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.firstTimeTitle}>First time on this browser?</Text>
+                <Text style={styles.firstTimeSub}>
+                  Welcome! Sign in below or create a new account to launch your guided tour.
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* Card */}
           <Animated.View style={[styles.card, { transform: [{ translateX: shakeAnim }] }]}>
             <Text style={styles.cardTitle}>Welcome back</Text>
@@ -128,6 +171,7 @@ export default function LoginScreen({ navigation }) {
                   placeholderTextColor={COLORS.textMuted}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  autoComplete="username"
                   returnKeyType="next"
                   onSubmitEditing={() => passwordRef.current?.focus()}
                   onFocus={() => setFocusedField('username')}
@@ -159,6 +203,7 @@ export default function LoginScreen({ navigation }) {
                   placeholderTextColor={COLORS.textMuted}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
+                  autoComplete="current-password"
                   returnKeyType="done"
                   onSubmitEditing={handleLogin}
                   onFocus={() => setFocusedField('password')}
@@ -177,6 +222,20 @@ export default function LoginScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Remember / Save Credentials Checkbox */}
+            <TouchableOpacity
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(prev => !prev)}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={rememberMe ? 'checkbox' : 'square-outline'}
+                size={20}
+                color={rememberMe ? COLORS.accent : COLORS.textMuted}
+              />
+              <Text style={styles.rememberText}>Save credentials in browser</Text>
+            </TouchableOpacity>
 
             {/* Login Button */}
             <TouchableOpacity
@@ -278,6 +337,40 @@ const styles = StyleSheet.create({
     flex: 1, color: COLORS.text,
     fontSize: 15, paddingVertical: 14,
     fontWeight: '500',
+  },
+  firstTimeBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: COLORS.accentSoft,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
+    borderWidth: 1.5,
+    borderColor: COLORS.accent,
+  },
+  firstTimeTitle: {
+    color: COLORS.text,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  firstTimeSub: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: SPACING.md,
+    marginTop: 4,
+  },
+  rememberText: {
+    color: COLORS.textSecondary,
+    fontSize: 13,
+    fontWeight: '600',
   },
   eyeBtn: { padding: 4 },
   loginBtn: {
